@@ -1,468 +1,649 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RealtyEnhance | Professional Real Estate Image Enhancement</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <header>
-        <div class="container">
-            <div class="logo">
-                <h1><span class="highlight">Realty</span>Enhance</h1>
-                <p class="tagline">Professional Image Enhancement for Real Estate</p>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#home" class="active">Home</a></li>
-                    <li><a href="#how-it-works">How It Works</a></li>
-                    <li><a href="#examples">Examples</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+      <div class="container">
+        <div class="logo">
+          <div class="logo-container">
+            <svg class="site-logo" viewBox="0 0 100 100" width="40" height="40">
+              <!-- House Shape -->
+              <polygon
+                points="50,15 85,40 85,85 15,85 15,40"
+                fill="white"
+                stroke="#2c6cff"
+                stroke-width="3"
+                stroke-linejoin="round"
+              />
+
+              <!-- Roof -->
+              <polygon
+                points="50,5 90,35 10,35"
+                fill="#2c6cff"
+                stroke="#2c6cff"
+                stroke-width="2"
+              />
+
+              <!-- Door -->
+              <rect
+                x="40"
+                y="60"
+                width="20"
+                height="25"
+                fill="#5f9ea0"
+                rx="2"
+                ry="2"
+              />
+              <circle cx="45" cy="72.5" r="2" fill="white" />
+
+              <!-- Windows -->
+              <rect
+                x="25"
+                y="50"
+                width="15"
+                height="15"
+                fill="#2c6cff"
+                stroke="white"
+                stroke-width="2"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                x="60"
+                y="50"
+                width="15"
+                height="15"
+                fill="#2c6cff"
+                stroke="white"
+                stroke-width="2"
+                rx="2"
+                ry="2"
+              />
+
+              <!-- Sparkle Effects -->
+              <polygon
+                points="60,53 62,57 66,59 62,61 60,65 58,61 54,59 58,57"
+                fill="white"
+              />
+              <polygon
+                points="75,75 76,77 78,78 76,79 75,81 74,79 72,78 74,77"
+                fill="white"
+              />
+            </svg>
+            <h1><span class="highlight">Realty</span>Enhance</h1>
+          </div>
+          <p class="tagline">Professional Image Enhancement for Real Estate</p>
         </div>
+        <nav>
+          <ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#examples">Examples</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Transform Your Real Estate Photos</h2>
-                <p>AI-powered enhancement that maintains property integrity while creating stunning marketing materials</p>
-                <a href="#upload-section" class="btn btn-primary">Enhance Your Photos Now</a>
-            </div>
+      <div class="container">
+        <div class="hero-content">
+          <h2>Transform Your Real Estate Photos</h2>
+          <p>
+            AI-powered enhancement that maintains property integrity while
+            creating stunning marketing materials
+          </p>
+          <a href="#upload-section" class="btn btn-primary"
+            >Enhance Your Photos Now</a
+          >
         </div>
+      </div>
     </section>
 
     <section id="upload-section" class="upload-section">
-        <div class="container">
-            <h2>Upload Your Images</h2>
-            <div class="upload-container">
-                <div class="upload-area" id="drop-area">
-                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
-                    <div class="upload-content">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Drag & drop images here or</p>
-                        <button class="btn btn-secondary" id="browse-btn">Browse Files</button>
-                        <p class="small">Supported formats: JPEG, PNG, WEBP</p>
-                    </div>
-                </div>
-
-                <div class="enhancement-options">
-                    <h3>Enhancement Level</h3>
-                    <div class="option-selector">
-                        <label class="option-label">
-                            <input type="radio" name="enhancement" value="minimal" checked>
-                            <span class="option-card">
-                                <div class="tooltip-icon" data-level="minimal">
-                                    <i class="fas fa-info-circle"></i>
-                                    <div class="tooltip-content">
-                                        <div class="example-tooltip">
-                                            <div class="tooltip-header">Minimal Enhancement</div>
-                                            <div class="tooltip-images">
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">Before</span>
-                                                    <img src="/api/placeholder/300/200" alt="Before minimal enhancement">
-                                                </div>
-                                                <i class="fas fa-arrow-right"></i>
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">After</span>
-                                                    <img src="/api/placeholder/300/200" alt="After minimal enhancement">
-                                                </div>
-                                            </div>
-                                            <p>Subtle lighting and color corrections with minimal changes</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <i class="fas fa-feather"></i>
-                                <span>Minimal</span>
-                                <p class="option-desc">Subtle improvements while preserving original look</p>
-                            </span>
-                        </label>
-                        <label class="option-label">
-                            <input type="radio" name="enhancement" value="moderate">
-                            <span class="option-card">
-                                <div class="tooltip-icon" data-level="moderate">
-                                    <i class="fas fa-info-circle"></i>
-                                    <div class="tooltip-content">
-                                        <div class="example-tooltip">
-                                            <div class="tooltip-header">Moderate Enhancement</div>
-                                            <div class="tooltip-images">
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">Before</span>
-                                                    <img src="/api/placeholder/300/200" alt="Before moderate enhancement">
-                                                </div>
-                                                <i class="fas fa-arrow-right"></i>
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">After</span>
-                                                    <img src="/api/placeholder/300/200" alt="After moderate enhancement">
-                                                </div>
-                                            </div>
-                                            <p>Improved lighting, sky enhancement, and color correction</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <i class="fas fa-paint-brush"></i>
-                                <span>Moderate</span>
-                                <p class="option-desc">Balanced enhancements with noticeable improvements</p>
-                            </span>
-                        </label>
-                        <label class="option-label">
-                            <input type="radio" name="enhancement" value="significant">
-                            <span class="option-card">
-                                <div class="tooltip-icon" data-level="significant">
-                                    <i class="fas fa-info-circle"></i>
-                                    <div class="tooltip-content">
-                                        <div class="example-tooltip">
-                                            <div class="tooltip-header">Significant Enhancement</div>
-                                            <div class="tooltip-images">
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">Before</span>
-                                                    <img src="/api/placeholder/300/200" alt="Before significant enhancement">
-                                                </div>
-                                                <i class="fas fa-arrow-right"></i>
-                                                <div class="tooltip-img-container">
-                                                    <span class="tooltip-label">After</span>
-                                                    <img src="/api/placeholder/300/200" alt="After significant enhancement">
-                                                </div>
-                                            </div>
-                                            <p>Dramatic improvements in lighting, colors, and property appeal</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <i class="fas fa-magic"></i>
-                                <span>Significant</span>
-                                <p class="option-desc">Dramatic improvements while maintaining realism</p>
-                            </span>
-                        </label>
-                    </div>
-                    <button id="enhance-btn" class="btn btn-primary" disabled>Enhance Images</button>
-                </div>
+      <div class="container">
+        <h2>Upload Your Images</h2>
+        <div class="upload-container">
+          <div class="upload-area" id="drop-area">
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              multiple
+              hidden
+            />
+            <div class="upload-content">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Drag & drop images here or</p>
+              <button class="btn btn-secondary" id="browse-btn">
+                Browse Files
+              </button>
+              <p class="small">Supported formats: JPEG, PNG, WEBP</p>
             </div>
+          </div>
+
+          <div class="enhancement-options">
+            <h3>Enhancement Level</h3>
+            <div class="option-selector">
+              <label class="option-label">
+                <input
+                  type="radio"
+                  name="enhancement"
+                  value="minimal"
+                  checked
+                />
+                <span class="option-card">
+                  <div class="tooltip-icon" data-level="minimal">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="tooltip-content">
+                      <div class="example-tooltip">
+                        <div class="tooltip-header">Minimal Enhancement</div>
+                        <div class="tooltip-images">
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">Before</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="Before minimal enhancement"
+                            />
+                          </div>
+                          <i class="fas fa-arrow-right"></i>
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">After</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="After minimal enhancement"
+                            />
+                          </div>
+                        </div>
+                        <p>
+                          Subtle lighting and color corrections with minimal
+                          changes
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <i class="fas fa-feather"></i>
+                  <span>Minimal</span>
+                  <p class="option-desc">
+                    Subtle improvements while preserving original look
+                  </p>
+                </span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="enhancement" value="moderate" />
+                <span class="option-card">
+                  <div class="tooltip-icon" data-level="moderate">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="tooltip-content">
+                      <div class="example-tooltip">
+                        <div class="tooltip-header">Moderate Enhancement</div>
+                        <div class="tooltip-images">
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">Before</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="Before moderate enhancement"
+                            />
+                          </div>
+                          <i class="fas fa-arrow-right"></i>
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">After</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="After moderate enhancement"
+                            />
+                          </div>
+                        </div>
+                        <p>
+                          Improved lighting, sky enhancement, and color
+                          correction
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <i class="fas fa-paint-brush"></i>
+                  <span>Moderate</span>
+                  <p class="option-desc">
+                    Balanced enhancements with noticeable improvements
+                  </p>
+                </span>
+              </label>
+              <label class="option-label">
+                <input type="radio" name="enhancement" value="significant" />
+                <span class="option-card">
+                  <div class="tooltip-icon" data-level="significant">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="tooltip-content">
+                      <div class="example-tooltip">
+                        <div class="tooltip-header">
+                          Significant Enhancement
+                        </div>
+                        <div class="tooltip-images">
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">Before</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="Before significant enhancement"
+                            />
+                          </div>
+                          <i class="fas fa-arrow-right"></i>
+                          <div class="tooltip-img-container">
+                            <span class="tooltip-label">After</span>
+                            <img
+                              src="/api/placeholder/300/200"
+                              alt="After significant enhancement"
+                            />
+                          </div>
+                        </div>
+                        <p>
+                          Dramatic improvements in lighting, colors, and
+                          property appeal
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <i class="fas fa-magic"></i>
+                  <span>Significant</span>
+                  <p class="option-desc">
+                    Dramatic improvements while maintaining realism
+                  </p>
+                </span>
+              </label>
+            </div>
+            <button id="enhance-btn" class="btn btn-primary" disabled>
+              Enhance Images
+            </button>
+          </div>
         </div>
+      </div>
     </section>
 
     <section id="preview-section" class="preview-section hidden">
-        <div class="container">
-            <h2>Your Enhanced Images</h2>
-            <div class="gallery-container">
-                <div class="gallery" id="results-gallery">
-                    <!-- Results will be populated here by JavaScript -->
-                </div>
-            </div>
-            <div class="action-buttons">
-                <button id="download-all" class="btn btn-primary"><i class="fas fa-download"></i> Download All</button>
-                <button id="start-over" class="btn btn-secondary"><i class="fas fa-redo"></i> Start Over</button>
-            </div>
+      <div class="container">
+        <h2>Your Enhanced Images</h2>
+        <div class="gallery-container">
+          <div class="gallery" id="results-gallery">
+            <!-- Results will be populated here by JavaScript -->
+          </div>
         </div>
+        <div class="action-buttons">
+          <button id="download-all" class="btn btn-primary">
+            <i class="fas fa-download"></i> Download All
+          </button>
+          <button id="start-over" class="btn btn-secondary">
+            <i class="fas fa-redo"></i> Start Over
+          </button>
+        </div>
+      </div>
     </section>
 
     <section id="how-it-works" class="how-it-works">
-        <div class="container">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-upload"></i>
-                    </div>
-                    <h3>Upload</h3>
-                    <p>Upload your real estate photos directly to our secure platform</p>
-                </div>
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-sliders-h"></i>
-                    </div>
-                    <h3>Select Level</h3>
-                    <p>Choose how much enhancement you want for your images</p>
-                </div>
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3>AI Processing</h3>
-                    <p>Our AI analyzes and enhances your photos while preserving accuracy</p>
-                </div>
-                <div class="step">
-                    <div class="step-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <h3>Download</h3>
-                    <p>Download your enhanced images ready for marketing</p>
-                </div>
+      <div class="container">
+        <h2>How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-upload"></i>
             </div>
+            <h3>Upload</h3>
+            <p>
+              Upload your real estate photos directly to our secure platform
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-sliders-h"></i>
+            </div>
+            <h3>Select Level</h3>
+            <p>Choose how much enhancement you want for your images</p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <h3>AI Processing</h3>
+            <p>
+              Our AI analyzes and enhances your photos while preserving accuracy
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-download"></i>
+            </div>
+            <h3>Download</h3>
+            <p>Download your enhanced images ready for marketing</p>
+          </div>
         </div>
+      </div>
     </section>
-    
+
     <section id="pricing" class="pricing">
-        <div class="container">
-            <h2>Choose Your Plan</h2>
-            <p class="pricing-subtitle">Select the option that works best for your business needs</p>
-            
-            <div class="pricing-toggle">
-                <span>Pay As You Go</span>
-                <label class="switch">
-                    <input type="checkbox" id="pricing-toggle">
-                    <span class="slider round"></span>
-                </label>
-                <span>Subscription</span>
-            </div>
-            
-            <div class="pricing-plans">
-                <!-- Pay As You Go Plans -->
-                <div class="pricing-options pay-as-you-go">
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Starter</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">1.99</span>
-                                <span class="period">per image</span>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> Minimal & Moderate enhancements</li>
-                                <li><i class="fas fa-check"></i> Standard processing time</li>
-                                <li><i class="fas fa-check"></i> 30-day image storage</li>
-                                <li><i class="fas fa-check"></i> Basic customer support</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#upload-section" class="btn btn-secondary">Get Started</a>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-card highlighted">
-                        <div class="popular-tag">Most Popular</div>
-                        <div class="pricing-header">
-                            <h3>Professional</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">2.49</span>
-                                <span class="period">per image</span>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> All enhancement levels</li>
-                                <li><i class="fas fa-check"></i> Priority processing</li>
-                                <li><i class="fas fa-check"></i> 60-day image storage</li>
-                                <li><i class="fas fa-check"></i> Email support</li>
-                                <li><i class="fas fa-check"></i> Bulk discounts available</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#upload-section" class="btn btn-primary">Get Started</a>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Agency</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">1.99</span>
-                                <span class="period">per image</span>
-                                <p class="minimum">50+ images</p>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> All enhancement levels</li>
-                                <li><i class="fas fa-check"></i> Expedited processing</li>
-                                <li><i class="fas fa-check"></i> 90-day image storage</li>
-                                <li><i class="fas fa-check"></i> Priority support</li>
-                                <li><i class="fas fa-check"></i> White-label option</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#contact" class="btn btn-secondary">Contact Sales</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Subscription Plans -->
-                <div class="pricing-options subscription hidden">
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Basic</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">29</span>
-                                <span class="period">/month</span>
-                                <p class="limit">20 images/month</p>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> All enhancement levels</li>
-                                <li><i class="fas fa-check"></i> Standard processing time</li>
-                                <li><i class="fas fa-check"></i> 60-day image storage</li>
-                                <li><i class="fas fa-check"></i> Email support</li>
-                                <li><i class="fas fa-check"></i> $1.75/image for extras</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#" class="btn btn-secondary">Subscribe</a>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-card highlighted">
-                        <div class="popular-tag">Most Popular</div>
-                        <div class="pricing-header">
-                            <h3>Pro</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">79</span>
-                                <span class="period">/month</span>
-                                <p class="limit">60 images/month</p>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> All enhancement levels</li>
-                                <li><i class="fas fa-check"></i> Priority processing</li>
-                                <li><i class="fas fa-check"></i> 90-day image storage</li>
-                                <li><i class="fas fa-check"></i> Priority support</li>
-                                <li><i class="fas fa-check"></i> $1.50/image for extras</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#" class="btn btn-primary">Subscribe</a>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Agency</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">199</span>
-                                <span class="period">/month</span>
-                                <p class="limit">200 images/month</p>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fas fa-check"></i> All enhancement levels</li>
-                                <li><i class="fas fa-check"></i> Expedited processing</li>
-                                <li><i class="fas fa-check"></i> 120-day image storage</li>
-                                <li><i class="fas fa-check"></i> Dedicated support</li>
-                                <li><i class="fas fa-check"></i> $1.25/image for extras</li>
-                                <li><i class="fas fa-check"></i> White-label option</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-footer">
-                            <a href="#contact" class="btn btn-secondary">Contact Sales</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="pricing-note">
-                <p>All plans include high-quality AI enhancements and secure downloads. Need a custom solution? <a href="#contact">Contact us</a> for enterprise pricing.</p>
-            </div>
+      <div class="container">
+        <h2>Choose Your Plan</h2>
+        <p class="pricing-subtitle">
+          Select the option that works best for your business needs
+        </p>
+
+        <div class="pricing-toggle">
+          <span>Pay As You Go</span>
+          <label class="switch">
+            <input type="checkbox" id="pricing-toggle" />
+            <span class="slider round"></span>
+          </label>
+          <span>Subscription</span>
         </div>
+
+        <div class="pricing-plans">
+          <!-- Pay As You Go Plans -->
+          <div class="pricing-options pay-as-you-go">
+            <div class="pricing-card">
+              <div class="pricing-header">
+                <h3>Starter</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">1.99</span>
+                  <span class="period">per image</span>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li>
+                    <i class="fas fa-check"></i> Minimal & Moderate enhancements
+                  </li>
+                  <li><i class="fas fa-check"></i> Standard processing time</li>
+                  <li><i class="fas fa-check"></i> 30-day image storage</li>
+                  <li><i class="fas fa-check"></i> Basic customer support</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#upload-section" class="btn btn-secondary"
+                  >Get Started</a
+                >
+              </div>
+            </div>
+
+            <div class="pricing-card highlighted">
+              <div class="popular-tag">Most Popular</div>
+              <div class="pricing-header">
+                <h3>Professional</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">2.49</span>
+                  <span class="period">per image</span>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li><i class="fas fa-check"></i> All enhancement levels</li>
+                  <li><i class="fas fa-check"></i> Priority processing</li>
+                  <li><i class="fas fa-check"></i> 60-day image storage</li>
+                  <li><i class="fas fa-check"></i> Email support</li>
+                  <li><i class="fas fa-check"></i> Bulk discounts available</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#upload-section" class="btn btn-primary"
+                  >Get Started</a
+                >
+              </div>
+            </div>
+
+            <div class="pricing-card">
+              <div class="pricing-header">
+                <h3>Agency</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">1.99</span>
+                  <span class="period">per image</span>
+                  <p class="minimum">50+ images</p>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li><i class="fas fa-check"></i> All enhancement levels</li>
+                  <li><i class="fas fa-check"></i> Expedited processing</li>
+                  <li><i class="fas fa-check"></i> 90-day image storage</li>
+                  <li><i class="fas fa-check"></i> Priority support</li>
+                  <li><i class="fas fa-check"></i> White-label option</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#contact" class="btn btn-secondary">Contact Sales</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subscription Plans -->
+          <div class="pricing-options subscription hidden">
+            <div class="pricing-card">
+              <div class="pricing-header">
+                <h3>Basic</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">29</span>
+                  <span class="period">/month</span>
+                  <p class="limit">20 images/month</p>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li><i class="fas fa-check"></i> All enhancement levels</li>
+                  <li><i class="fas fa-check"></i> Standard processing time</li>
+                  <li><i class="fas fa-check"></i> 60-day image storage</li>
+                  <li><i class="fas fa-check"></i> Email support</li>
+                  <li><i class="fas fa-check"></i> $1.75/image for extras</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#" class="btn btn-secondary">Subscribe</a>
+              </div>
+            </div>
+
+            <div class="pricing-card highlighted">
+              <div class="popular-tag">Most Popular</div>
+              <div class="pricing-header">
+                <h3>Pro</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">79</span>
+                  <span class="period">/month</span>
+                  <p class="limit">60 images/month</p>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li><i class="fas fa-check"></i> All enhancement levels</li>
+                  <li><i class="fas fa-check"></i> Priority processing</li>
+                  <li><i class="fas fa-check"></i> 90-day image storage</li>
+                  <li><i class="fas fa-check"></i> Priority support</li>
+                  <li><i class="fas fa-check"></i> $1.50/image for extras</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#" class="btn btn-primary">Subscribe</a>
+              </div>
+            </div>
+
+            <div class="pricing-card">
+              <div class="pricing-header">
+                <h3>Agency</h3>
+                <div class="price">
+                  <span class="currency">$</span>
+                  <span class="amount">199</span>
+                  <span class="period">/month</span>
+                  <p class="limit">200 images/month</p>
+                </div>
+              </div>
+              <div class="pricing-features">
+                <ul>
+                  <li><i class="fas fa-check"></i> All enhancement levels</li>
+                  <li><i class="fas fa-check"></i> Expedited processing</li>
+                  <li><i class="fas fa-check"></i> 120-day image storage</li>
+                  <li><i class="fas fa-check"></i> Dedicated support</li>
+                  <li><i class="fas fa-check"></i> $1.25/image for extras</li>
+                  <li><i class="fas fa-check"></i> White-label option</li>
+                </ul>
+              </div>
+              <div class="pricing-footer">
+                <a href="#contact" class="btn btn-secondary">Contact Sales</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pricing-note">
+          <p>
+            All plans include high-quality AI enhancements and secure downloads.
+            Need a custom solution? <a href="#contact">Contact us</a> for
+            enterprise pricing.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section id="examples" class="examples">
-        <div class="container">
-            <h2>Before & After Examples</h2>
-            <div class="example-gallery">
-                <div class="example">
-                    <div class="example-images">
-                        <div class="image-card">
-                            <span class="tag">Before</span>
-                            <img src="/api/placeholder/800/600" alt="Original real estate image" class="example-img">
-                        </div>
-                        <div class="image-card">
-                            <span class="tag">After</span>
-                            <img src="/api/placeholder/800/600" alt="Enhanced real estate image" class="example-img">
-                        </div>
-                    </div>
-                    <h3>Exterior Enhancement</h3>
-                    <p>Improved lighting, sky replacement, and lawn enhancement</p>
-                </div>
-                <div class="example">
-                    <div class="example-images">
-                        <div class="image-card">
-                            <span class="tag">Before</span>
-                            <img src="/api/placeholder/800/600" alt="Original kitchen image" class="example-img">
-                        </div>
-                        <div class="image-card">
-                            <span class="tag">After</span>
-                            <img src="/api/placeholder/800/600" alt="Enhanced kitchen image" class="example-img">
-                        </div>
-                    </div>
-                    <h3>Interior Refinement</h3>
-                    <p>Color correction, improved lighting, and decluttering</p>
-                </div>
+      <div class="container">
+        <h2>Before & After Examples</h2>
+        <div class="example-gallery">
+          <div class="example">
+            <div class="example-images">
+              <div class="image-card">
+                <span class="tag">Before</span>
+                <img
+                  src="/api/placeholder/800/600"
+                  alt="Original real estate image"
+                  class="example-img"
+                />
+              </div>
+              <div class="image-card">
+                <span class="tag">After</span>
+                <img
+                  src="/api/placeholder/800/600"
+                  alt="Enhanced real estate image"
+                  class="example-img"
+                />
+              </div>
             </div>
+            <h3>Exterior Enhancement</h3>
+            <p>Improved lighting, sky replacement, and lawn enhancement</p>
+          </div>
+          <div class="example">
+            <div class="example-images">
+              <div class="image-card">
+                <span class="tag">Before</span>
+                <img
+                  src="/api/placeholder/800/600"
+                  alt="Original kitchen image"
+                  class="example-img"
+                />
+              </div>
+              <div class="image-card">
+                <span class="tag">After</span>
+                <img
+                  src="/api/placeholder/800/600"
+                  alt="Enhanced kitchen image"
+                  class="example-img"
+                />
+              </div>
+            </div>
+            <h3>Interior Refinement</h3>
+            <p>Color correction, improved lighting, and decluttering</p>
+          </div>
         </div>
+      </div>
     </section>
 
     <section id="contact" class="contact">
-        <div class="container">
-            <h2>Questions? Get in Touch</h2>
-            <div class="contact-form">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Your name">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Your email address">
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" placeholder="Your message or question"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
+      <div class="container">
+        <h2>Questions? Get in Touch</h2>
+        <div class="contact-form">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Your email address"
+            />
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Your message or question"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
         </div>
+      </div>
     </section>
 
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <h2><span class="highlight">Realty</span>Refine</h2>
-                    <p>Enhancing real estate imagery since 2025</p>
-                </div>
-                <div class="footer-links">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#examples">Examples</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-social">
-                    <h3>Connect With Us</h3>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h2><span class="highlight">Realty</span>Enhance</h2>
+            <p>Enhancing real estate imagery since 2025</p>
+          </div>
+          <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#examples">Examples</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-social">
+            <h3>Connect With Us</h3>
+            <div class="social-icons">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" aria-label="LinkedIn"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 RealtyEnhance. All Rights Reserved.</p>
-            </div>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 RealtyEnhance. All Rights Reserved.</p>
+        </div>
+      </div>
     </footer>
 
     <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="loading-content">
-            <div class="loader"></div>
-            <p>Enhancing your images...</p>
-            <p class="small">This may take a moment depending on the number of images</p>
-        </div>
+      <div class="loading-content">
+        <div class="loader"></div>
+        <p>Enhancing your images...</p>
+        <p class="small">
+          This may take a moment depending on the number of images
+        </p>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
