@@ -15,6 +15,37 @@ document.addEventListener('DOMContentLoaded', function() {
     let uploadedFiles = [];
     let enhancedImages = [];
     
+    // Add header scroll effect for enhanced aesthetics
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+    
+    // Initialize animation on scroll
+    const animateElements = document.querySelectorAll('.step, .pricing-card, .example, .hero-content');
+    if (animateElements.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        animateElements.forEach((element, index) => {
+            element.style.opacity = "0";
+            element.style.animationDelay = (0.1 * index) + "s";
+            observer.observe(element);
+        });
+    }
+    
     // Initialize smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -23,39 +54,78 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
+                const headerOffset = document.querySelector('header').offsetHeight;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
                 window.scrollTo({
-                    top: targetElement.offsetTop - 80,
+                    top: offsetPosition,
                     behavior: 'smooth'
                 });
             }
         });
     });
     
-    // Event Listeners
-    browseBtn.addEventListener('click', () => {
-        fileInput.click();
-    });
+    // Check if elements exist before adding event listeners to prevent errors
+    if (browseBtn) {
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+    }
     
-    fileInput.addEventListener('change', handleFiles);
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+    }
     
     // Drag and drop events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
+    if (dropArea) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        dropArea.addEventListener('drop', handleDrop, false);
+    }
     
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
+    // Add event listeners to buttons if they exist
+    if (enhanceBtn) {
+        enhanceBtn.addEventListener('click', enhanceImages);
+    }
     
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
+    if (downloadAllBtn) {
+        downloadAllBtn.addEventListener('click', downloadAllImages);
+    }
     
-    dropArea.addEventListener('drop', handleDrop, false);
+    if (startOverBtn) {
+        startOverBtn.addEventListener('click', resetApp);
+    }
     
-    enhanceBtn.addEventListener('click', enhanceImages);
-    downloadAllBtn.addEventListener('click', downloadAllImages);
-    startOverBtn.addEventListener('click', resetApp);
+    // Pricing toggle functionality
+    if (pricingToggle) {
+        pricingToggle.addEventListener('change', function() {
+            const payAsYouGo = document.querySelector('.pricing-options.pay-as-you-go');
+            const subscription = document.querySelector('.pricing-options.subscription');
+            
+            if (this.checked) {
+                // Show subscription plans
+                payAsYouGo.classList.add('hidden');
+                subscription.classList.remove('hidden');
+            } else {
+                // Show pay-as-you-go plans
+                subscription.classList.add('hidden');
+                payAsYouGo.classList.remove('hidden');
+            }
+        });
+    }
     
     // Functions
     function preventDefaults(e) {
@@ -78,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function handleFiles(files) {
+        if (!files || files.length === 0) return;
+        
         // Convert FileList to array for easier manipulation
         const fileArray = files instanceof FileList ? Array.from(files) : files;
         
@@ -85,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const imageFiles = fileArray.filter(file => file.type.startsWith('image/'));
         
         if (imageFiles.length === 0) {
-            alert('Please select valid image files (JPEG, PNG, WEBP)');
+            showNotification('Please select valid image files (JPEG, PNG, WEBP)', 'error');
             return;
         }
         
@@ -93,15 +165,21 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadedFiles = [...uploadedFiles, ...imageFiles];
         
         // Enable enhance button if we have files
-        enhanceBtn.disabled = uploadedFiles.length === 0;
+        if (enhanceBtn) {
+            enhanceBtn.disabled = uploadedFiles.length === 0;
+        }
         
         // Update UI to show selected files
         updateDropAreaUI();
     }
     
     function updateDropAreaUI() {
+        if (!dropArea) return;
+        
+        const uploadContent = dropArea.querySelector('.upload-content');
+        if (!uploadContent) return;
+        
         if (uploadedFiles.length > 0) {
-            const uploadContent = dropArea.querySelector('.upload-content');
             uploadContent.innerHTML = `
                 <i class="fas fa-images"></i>
                 <p>${uploadedFiles.length} file${uploadedFiles.length > 1 ? 's' : ''} selected</p>
@@ -119,10 +197,13 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             // Add event listener to the reset button
-            document.getElementById('reset-files').addEventListener('click', (e) => {
-                e.stopPropagation();
-                resetFiles();
-            });
+            const resetFilesBtn = document.getElementById('reset-files');
+            if (resetFilesBtn) {
+                resetFilesBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    resetFiles();
+                });
+            }
             
             // Add CSS for the thumbnails
             if (!document.getElementById('thumbnail-styles')) {
@@ -138,9 +219,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     .file-thumbnail {
                         width: 80px;
                         height: 80px;
-                        border-radius: 6px;
+                        border-radius: 10px;
                         overflow: hidden;
                         border: 2px solid var(--medium-gray);
+                        box-shadow: var(--shadow);
+                        transition: var(--transition);
+                    }
+                    .file-thumbnail:hover {
+                        transform: translateY(-3px);
+                        box-shadow: var(--shadow-hover);
                     }
                     .file-thumbnail img {
                         width: 100%;
@@ -152,7 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Reset to default UI
-            const uploadContent = dropArea.querySelector('.upload-content');
             uploadContent.innerHTML = `
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Drag & drop images here or</p>
@@ -161,15 +247,20 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             // Re-add event listener to the browse button
-            document.getElementById('browse-btn').addEventListener('click', () => {
-                fileInput.click();
-            });
+            const browseBtnInner = document.getElementById('browse-btn');
+            if (browseBtnInner && fileInput) {
+                browseBtnInner.addEventListener('click', () => {
+                    fileInput.click();
+                });
+            }
         }
     }
     
     function resetFiles() {
         uploadedFiles = [];
-        enhanceBtn.disabled = true;
+        if (enhanceBtn) {
+            enhanceBtn.disabled = true;
+        }
         updateDropAreaUI();
     }
     
@@ -177,43 +268,60 @@ document.addEventListener('DOMContentLoaded', function() {
         if (uploadedFiles.length === 0) return;
         
         // Show loading overlay
-        loadingOverlay.classList.remove('hidden');
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('hidden');
+        }
         
         // Get selected enhancement level
-        const enhancementLevel = document.querySelector('input[name="enhancement"]:checked').value;
+        const enhancementLevel = document.querySelector('input[name="enhancement"]:checked')?.value || 'moderate';
         
         try {
-            // This would normally connect to the ChatGPT API
-            // For now, we'll simulate the enhancement process
+            // Simulate the enhancement process
             enhancedImages = await simulateEnhancement(uploadedFiles, enhancementLevel);
             
             // Populate the results gallery
             populateResultsGallery();
             
             // Hide upload section and show preview section
-            document.getElementById('upload-section').classList.add('hidden');
-            previewSection.classList.remove('hidden');
+            const uploadSection = document.getElementById('upload-section');
+            if (uploadSection) {
+                uploadSection.classList.add('hidden');
+            }
             
-            // Scroll to preview section
-            window.scrollTo({
-                top: previewSection.offsetTop - 80,
-                behavior: 'smooth'
-            });
+            if (previewSection) {
+                previewSection.classList.remove('hidden');
+                
+                // Scroll to preview section
+                const headerOffset = document.querySelector('header').offsetHeight;
+                const elementPosition = previewSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
         } catch (error) {
             console.error("Error enhancing images:", error);
-            alert("There was an error enhancing your images. Please try again.");
+            showNotification("There was an error enhancing your images. Please try again.", "error");
         } finally {
             // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+            }
         }
     }
     
     function populateResultsGallery() {
+        if (!resultsGallery) return;
+        
         resultsGallery.innerHTML = '';
         
         enhancedImages.forEach((imageSet, index) => {
             const comparisonElement = document.createElement('div');
             comparisonElement.className = 'image-comparison';
+            comparisonElement.style.opacity = "0";
+            comparisonElement.style.animationDelay = (0.1 * index) + "s";
             
             comparisonElement.innerHTML = `
                 <div class="comparison-images">
@@ -228,10 +336,15 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             resultsGallery.appendChild(comparisonElement);
+            
+            // Trigger animation after a small delay
+            setTimeout(() => {
+                comparisonElement.classList.add('animate-fadeIn');
+            }, 100);
         });
     }
     
-    // This function simulates the enhancement process that would normally call the ChatGPT API
+    // This function simulates the enhancement process that would normally call an API
     async function simulateEnhancement(files, level) {
         return new Promise((resolve) => {
             // Simulate API processing time
@@ -240,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Create the original image URL
                     const originalUrl = URL.createObjectURL(file);
                     
-                    // In a real implementation, this would be the URL returned from ChatGPT's image enhancement
+                    // In a real implementation, this would be the URL returned from an image enhancement API
                     // For now, we're just using the same image as a placeholder
                     const enhancedUrl = originalUrl;
                     
@@ -260,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function downloadAllImages() {
         if (enhancedImages.length === 0) return;
         
-        alert("In a production environment, this would download all enhanced images as a zip file.");
+        showNotification("In a production environment, this would download all enhanced images as a zip file.", "info");
         
         // Real implementation would create a zip of all enhanced images and trigger download
         // For example using JSZip library:
@@ -280,84 +393,245 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function resetApp() {
         // Hide preview section and show upload section
-        previewSection.classList.add('hidden');
-        document.getElementById('upload-section').classList.remove('hidden');
+        if (previewSection) {
+            previewSection.classList.add('hidden');
+        }
+        
+        const uploadSection = document.getElementById('upload-section');
+        if (uploadSection) {
+            uploadSection.classList.remove('hidden');
+        }
         
         // Clear files
         resetFiles();
         
         // Clear the results gallery
-        resultsGallery.innerHTML = '';
+        if (resultsGallery) {
+            resultsGallery.innerHTML = '';
+        }
         enhancedImages = [];
         
         // Scroll back to upload section
-        window.scrollTo({
-            top: document.getElementById('upload-section').offsetTop - 80,
-            behavior: 'smooth'
+        if (uploadSection) {
+            const headerOffset = document.querySelector('header').offsetHeight;
+            const elementPosition = uploadSection.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+    
+    // Add a notification system for better user feedback
+    function showNotification(message, type = 'success') {
+        // Create notification container if it doesn't exist
+        let notificationContainer = document.getElementById('notification-container');
+        if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.id = 'notification-container';
+            notificationContainer.style.position = 'fixed';
+            notificationContainer.style.top = '100px';
+            notificationContainer.style.right = '20px';
+            notificationContainer.style.zIndex = '1000';
+            document.body.appendChild(notificationContainer);
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+            <button class="close-notification"><i class="fas fa-times"></i></button>
+        `;
+        
+        // Notification styles
+        const notificationStyles = `
+            .notification {
+                background-color: white;
+                color: var(--dark-gray);
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                animation: slideIn 0.3s forwards;
+                max-width: 350px;
+                border-left: 4px solid var(--primary-color);
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            
+            .notification.success { border-left-color: var(--success); }
+            .notification.error { border-left-color: #dc3545; }
+            .notification.info { border-left-color: var(--primary-color); }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+            }
+            
+            .notification-content i {
+                margin-right: 10px;
+                font-size: 18px;
+            }
+            
+            .notification.success i { color: var(--success); }
+            .notification.error i { color: #dc3545; }
+            .notification.info i { color: var(--primary-color); }
+            
+            .close-notification {
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: var(--dark-gray);
+                opacity: 0.5;
+                transition: opacity 0.2s;
+            }
+            
+            .close-notification:hover {
+                opacity: 1;
+            }
+            
+            @keyframes slideIn {
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(50px);
+                }
+            }
+        `;
+        
+        // Add styles if they don't exist
+        if (!document.getElementById('notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = notificationStyles;
+            document.head.appendChild(style);
+        }
+        
+        // Add close button functionality
+        notification.querySelector('.close-notification').addEventListener('click', () => {
+            notification.style.animation = 'slideOut 0.3s forwards';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
         });
+        
+        // Add to container
+        notificationContainer.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.animation = 'slideIn 0.3s forwards';
+        }, 10);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.animation = 'slideOut 0.3s forwards';
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
     }
     
     // Add CSS for hover effect on comparison images
-    const style = document.createElement('style');
-    style.textContent = `
-        .comparison-images {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .comparison-images img:nth-child(2) {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .comparison-images:hover img:nth-child(2) {
-            opacity: 1;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Pricing Toggle
-    if (pricingToggle) {
-        pricingToggle.addEventListener('change', function() {
-            const payAsYouGo = document.querySelector('.pricing-options.pay-as-you-go');
-            const subscription = document.querySelector('.pricing-options.subscription');
+    if (!document.getElementById('comparison-styles')) {
+        const style = document.createElement('style');
+        style.id = 'comparison-styles';
+        style.textContent = `
+            .comparison-images {
+                position: relative;
+                overflow: hidden;
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
+            }
             
-            if (this.checked) {
-                // Show subscription plans
-                payAsYouGo.classList.add('hidden');
-                subscription.classList.remove('hidden');
+            .comparison-images img:nth-child(1) {
+                display: block;
+                width: 100%;
+            }
             
-    
-    // In a real implementation, this would be replaced with actual API calls
-    // to the ChatGPT API for image enhancement
-    function connectToChatGPTAPI(imageFile, enhancementLevel) {
-        // Implementation would depend on the specific API structure
-        // Example structure (pseudo-code):
-        
-        /*
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        formData.append('enhancement_level', enhancementLevel);
-        
-        return fetch('https://api.openai.com/v1/image-enhancement', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer YOUR_API_KEY'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            return {
-                original: URL.createObjectURL(imageFile),
-                enhanced: data.enhanced_image_url,
-                filename: imageFile.name
-            };
-        });
-        */
+            .comparison-images img:nth-child(2) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+            
+            .comparison-images:hover img:nth-child(2) {
+                opacity: 1;
+            }
+            
+            /* Add a slider effect for better comparison */
+            .comparison-images::after {
+                content: '↔ Hover to Compare';
+                position: absolute;
+                bottom: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 5px 15px;
+                border-radius: 20px;
+                font-size: 12px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .comparison-images:hover::after {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
     }
+    
+    // Image lazy loading for better performance
+    const lazyLoadImages = function() {
+        const lazyImages = document.querySelectorAll('.example-img[data-src]');
+        
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+            
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver
+            lazyImages.forEach(img => {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            });
+        }
+    };
+    
+    // Initialize lazy loading
+    lazyLoadImages();
+});
