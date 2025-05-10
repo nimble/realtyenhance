@@ -90,6 +90,11 @@
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#examples">Examples</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li>
+              <form id="signInForm">
+                <button id="signIn-Btn" class="btn btn-primary" type="submit">Sign In</button>
+              </form>
+            </li>
           </ul>
         </nav>
       </div>
@@ -643,6 +648,13 @@
         </p>
       </div>
     </div>
+
+    <script>
+      document.getElementById('signInForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        window.location.href = "signin.html";
+      });
+    </script>
 
     <script src="script.js"></script>
   </body>

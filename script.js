@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    //Adding Signin Listener
+    document.getElementById('signin-btn').addEventListener('submit', function(event) {
+        event.preventDefault(); // Stop default form submission
+        window.location.href = "signin.html";
+    });
     
     // Event Listeners
     browseBtn.addEventListener('click', () => {
@@ -331,11 +337,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show subscription plans
                 payAsYouGo.classList.add('hidden');
                 subscription.classList.remove('hidden');
+            }
+        });
+    }
+})
             
     
     // In a real implementation, this would be replaced with actual API calls
     // to the ChatGPT API for image enhancement
-    function connectToChatGPTAPI(imageFile, enhancementLevel) {
+    //function connectToChatGPTAPI(imageFile, enhancementLevel) {
         // Implementation would depend on the specific API structure
         // Example structure (pseudo-code):
         
@@ -360,4 +370,4 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
         */
-    }
+    //}
