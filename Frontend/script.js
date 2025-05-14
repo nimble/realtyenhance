@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const startOverBtn = document.getElementById("start-over");
   const pricingToggle = document.getElementById("pricing-toggle");
   const signInForm = document.getElementById("signInForm");
+  const contactForm = document.querySelector(".contact-form");
 
   // Global variables
   let uploadedFiles = [];
@@ -43,11 +44,20 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize pricing toggle functionality
   initializePricingToggle();
 
+  // Initialize enhancement options
+  initializeEnhancementOptions();
+
+  // Initialize contact form
+  initializeContactForm();
+
   // Initialize chatbot
   initializeChatbot();
 
   // Initialize auth system
   initializeAuthSystem();
+
+  // Check for logged in user
+  checkLoggedInUser();
 
   // Functions
   function initializeAnimations() {
@@ -177,6 +187,238 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     }
+  }
+
+  // Fix enhancement level styling and interaction
+  function initializeEnhancementOptions() {
+    const enhancementOptions = document.querySelectorAll(".option-label");
+    const tooltipIcons = document.querySelectorAll(".tooltip-icon");
+
+    if (!enhancementOptions.length) return;
+
+    // Add enhancement options styles
+    if (!document.getElementById("enhancement-options-styles")) {
+      const enhancementStyles = document.createElement("style");
+      enhancementStyles.id = "enhancement-options-styles";
+      enhancementStyles.textContent = `
+        .enhancement-options {
+          background-color: var(--white);
+          padding: 30px;
+          border-radius: var(--border-radius);
+          box-shadow: var(--shadow);
+          text-align: left;
+        }
+        
+        .enhancement-options h3 {
+          font-size: 1.5rem;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        
+        .option-selector {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 30px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .option-label {
+          cursor: pointer;
+          flex: 1;
+          min-width: 180px;
+          max-width: 260px;
+          position: relative;
+        }
+        
+        .option-label input[type="radio"] {
+          position: absolute;
+          opacity: 0;
+        }
+        
+        .option-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 25px 20px;
+          border: 2px solid var(--medium-gray);
+          border-radius: var(--border-radius);
+          transition: var(--transition);
+          position: relative;
+          background-color: var(--white);
+        }
+        
+        .option-label input[type="radio"]:checked + .option-card {
+          border-color: var(--primary-color);
+          background-color: var(--primary-light);
+          box-shadow: 0 5px 15px rgba(44, 108, 255, 0.15);
+          transform: translateY(-5px);
+        }
+        
+        .option-card i {
+          font-size: 28px;
+          color: var(--primary-color);
+          margin-bottom: 15px;
+        }
+        
+        .option-card span {
+          font-weight: 600;
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+        
+        .option-desc {
+          font-size: 14px;
+          color: var(--dark-gray);
+          text-align: center;
+          margin: 0;
+        }
+        
+        .tooltip-icon {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          cursor: pointer;
+          z-index: 5;
+        }
+        
+        .tooltip-icon i {
+          font-size: 16px;
+          color: var(--primary-color);
+        }
+        
+        .tooltip-content {
+          position: absolute;
+          top: -10px;
+          right: 25px;
+          width: 320px;
+          background-color: white;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+          transform: scale(0.8);
+          opacity: 0;
+          pointer-events: none;
+          transition: all 0.3s;
+          z-index: 100;
+        }
+        
+        .tooltip-icon:hover .tooltip-content {
+          transform: scale(1);
+          opacity: 1;
+        }
+        
+        .tooltip-header {
+          font-weight: 600;
+          margin-bottom: 10px;
+          color: var(--primary-color);
+        }
+        
+        .tooltip-images {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          gap: 10px;
+        }
+        
+        .tooltip-img-container {
+          flex: 1;
+          text-align: center;
+        }
+        
+        .tooltip-label {
+          display: block;
+          font-size: 12px;
+          margin-bottom: 5px;
+          opacity: 0.7;
+        }
+        
+        .tooltip-img-container img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 5px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+      `;
+      document.head.appendChild(enhancementStyles);
+    }
+
+    // Add event listeners for enhancement options
+    enhancementOptions.forEach((option) => {
+      const radio = option.querySelector('input[type="radio"]');
+      if (radio) {
+        option.addEventListener("click", () => {
+          radio.checked = true;
+
+          // Manually trigger a change event
+          const changeEvent = new Event("change", { bubbles: true });
+          radio.dispatchEvent(changeEvent);
+        });
+      }
+    });
+
+    // Mobile-friendly tooltip handling
+    tooltipIcons.forEach((icon) => {
+      icon.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent triggering the parent radio selection
+      });
+    });
+  }
+
+  // Initialize contact form with email functionality
+  function initializeContactForm() {
+    if (!contactForm) return;
+
+    contactForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Get form data
+      const name = this.querySelector("#name")?.value || "";
+      const email = this.querySelector("#email")?.value || "";
+      const message = this.querySelector("#message")?.value || "";
+
+      // Basic validation
+      if (!name || !email || !message) {
+        showNotification("Please fill out all fields", "error");
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showNotification("Please enter a valid email address", "error");
+        return;
+      }
+
+      // In a real implementation, this would send data to a server endpoint
+      // For now, we'll simulate a successful form submission
+
+      // Show loading state
+      const submitButton = this.querySelector('button[type="submit"]');
+      if (submitButton) {
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitButton.disabled = true;
+
+        // Simulate server request
+        setTimeout(() => {
+          // Reset button
+          submitButton.innerHTML = originalText;
+          submitButton.disabled = false;
+
+          // Show success message
+          showNotification(
+            "Your message has been sent successfully to admin@realtyenhance.com",
+            "success"
+          );
+
+          // Reset form
+          this.reset();
+        }, 1500);
+      }
+    });
   }
 
   // Utility functions
@@ -925,7 +1167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "team",
           ],
           response:
-            "For any questions or support, you can reach our team through the contact form on our website. We provide email support for all customers, with priority and dedicated support for higher-tier plans. For enterprise or custom needs, please contact our sales team directly.",
+            "For any questions or support, you can reach our team through the contact form on our website or email admin@realtyenhance.com directly. We provide email support for all customers, with priority and dedicated support for higher-tier plans. For enterprise or custom needs, please contact our sales team directly.",
         },
         {
           keywords: ["format", "file", "type", "jpeg", "png", "webp"],
@@ -1486,20 +1728,35 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Find and initialize any existing auth buttons
-    const existingAuthButton = document.getElementById("auth-button");
-    if (existingAuthButton) {
-      existingAuthButton.addEventListener("click", function (e) {
-        e.preventDefault();
-        // Check if we already have a user
-        const currentUser = localStorage.getItem("currentUser");
-        if (currentUser) {
-          toggleUserDropdown();
-        } else {
-          // Navigate to signin page or show auth modal
-          window.location.href = "signin.html";
-        }
-      });
+    // Insert the auth button in the header nav if it doesn't exist
+    const navEl = document.querySelector("header nav ul");
+    if (navEl && !document.getElementById("auth-button")) {
+      const authButtonHTML = `
+        <li class="auth-nav-item">
+            <a href="#" id="auth-button" class="btn btn-secondary">
+                <i class="fas fa-user"></i> <span>Login / Sign Up</span>
+            </a>
+        </li>
+      `;
+      navEl.insertAdjacentHTML("beforeend", authButtonHTML);
+
+      // Add event listener to the newly created button
+      const authButton = document.getElementById("auth-button");
+      if (authButton) {
+        authButton.addEventListener("click", function (e) {
+          e.preventDefault();
+          // Check if we already have a user
+          const currentUser = JSON.parse(
+            localStorage.getItem("currentUser") || "null"
+          );
+          if (currentUser) {
+            toggleUserDropdown();
+          } else {
+            // Navigate to signin page
+            window.location.href = "signin.html";
+          }
+        });
+      }
     }
 
     // Function to toggle user dropdown menu
@@ -1611,7 +1868,7 @@ document.addEventListener("DOMContentLoaded", function () {
               padding: 0;
             }
             
-            .dropdown-menu li a {
+.dropdown-menu li a {
               display: flex;
               align-items: center;
               padding: 10px 20px;
@@ -1639,6 +1896,23 @@ document.addEventListener("DOMContentLoaded", function () {
             
             .logout-link:hover {
               background-color: rgba(220, 53, 69, 0.1) !important;
+            }
+
+            /* User auth button styles */
+            .auth-nav-item .btn {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            
+            .auth-nav-item .btn.logged-in {
+              background-color: var(--primary-color);
+              color: white;
+              border-color: var(--primary-color);
+            }
+            
+            .auth-nav-item .btn.logged-in:hover {
+              background-color: var(--primary-dark);
             }
           `;
           document.head.appendChild(dropdownStyles);
@@ -1679,6 +1953,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const authButton = document.getElementById("auth-button");
             if (authButton) {
               authButton.innerHTML = `<i class="fas fa-user"></i> <span>Login / Sign Up</span>`;
+              authButton.classList.remove("logged-in");
             }
           });
         }
@@ -1705,9 +1980,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (accountDropdown.classList.contains("active")) {
         setTimeout(() => {
           const closeDropdown = (event) => {
+            const authButton = document.getElementById("auth-button");
             if (
               !accountDropdown.contains(event.target) &&
-              !existingAuthButton?.contains(event.target)
+              !authButton?.contains(event.target)
             ) {
               accountDropdown.classList.remove("active");
               document.removeEventListener("click", closeDropdown);
@@ -1717,16 +1993,105 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 100);
       }
     }
+  }
 
-    // Check for logged in user and update UI accordingly
+  // Check for logged in user and update UI
+  function checkLoggedInUser() {
     const currentUser = JSON.parse(
       localStorage.getItem("currentUser") || "null"
     );
-    if (currentUser && existingAuthButton) {
-      existingAuthButton.innerHTML = `<i class="fas fa-user-circle"></i> <span>${
+    const authButton = document.getElementById("auth-button");
+
+    if (currentUser && authButton) {
+      // Update the button to show logged in user
+      authButton.innerHTML = `<i class="fas fa-user-circle"></i> <span>${
         currentUser.name ? currentUser.name.split(" ")[0] : "User"
       }</span>`;
-      existingAuthButton.classList.add("logged-in");
+      authButton.classList.add("logged-in");
+
+      // Also update any other areas in the UI that should reflect the logged-in state
+      const userDisplayElements =
+        document.querySelectorAll(".user-display-name");
+      userDisplayElements.forEach((element) => {
+        element.textContent = currentUser.name || "User";
+      });
+    }
+  }
+
+  // Add mock login functionality for the sign-in page
+  if (window.location.pathname.includes("signin.html")) {
+    const signinForm = document.getElementById("signinForm");
+    if (signinForm) {
+      signinForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Get user input
+        const username = document.getElementById("username")?.value || "";
+        const password = document.getElementById("password")?.value || "";
+
+        if (!username || !password) {
+          alert("Please fill in all fields");
+          return;
+        }
+
+        // For demo purposes, create a mock user
+        const user = {
+          id: 1,
+          name: username.includes("@") ? username.split("@")[0] : username,
+          email: username.includes("@") ? username : username + "@example.com",
+          plan: "Professional",
+          joinDate: new Date().toISOString(),
+        };
+
+        // Save to localStorage
+        localStorage.setItem("currentUser", JSON.stringify(user));
+
+        // Redirect to homepage
+        window.location.href = "index.html";
+      });
+    }
+  }
+
+  // Add mock signup functionality for the signup page
+  if (window.location.pathname.includes("signuppage.html")) {
+    const registerForm = document.getElementById("registerForm");
+    if (registerForm) {
+      registerForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Get user input
+        const email = document.getElementById("registerEmail")?.value || "";
+        const password =
+          document.getElementById("registerPassword")?.value || "";
+        const confirmPassword =
+          document.getElementById("confirmPassword")?.value || "";
+
+        // Validate input
+        if (!email || !password || !confirmPassword) {
+          alert("Please fill in all fields");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match");
+          return;
+        }
+
+        // Create user object
+        const user = {
+          id: 1,
+          name: email.split("@")[0],
+          email: email,
+          plan: "Basic",
+          joinDate: new Date().toISOString(),
+        };
+
+        // Save to localStorage
+        localStorage.setItem("currentUser", JSON.stringify(user));
+
+        // Redirect to homepage
+        window.location.href = "index.html";
+      });
     }
   }
 });
