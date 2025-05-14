@@ -58,9 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Check for logged in user
   checkLoggedInUser();
-  
-  // 
-  fixHeaderLayout()
+
+  //
+  fixHeaderLayout();
 
   // Functions
   function initializeAnimations() {
@@ -371,56 +371,97 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add this code to script.js
 
-  // Fixed contact form functionality
+  // Fixed Contact Form functionality
   function initializeContactForm() {
-    const contactForm = document.querySelector(".contact-form");
-    if (!contactForm) return;
+    // Wait until DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("Initializing contact form...");
 
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+      // Get the contact form
+      const contactForm = document.querySelector(".contact-form");
 
-      // Get form data
-      const name = this.querySelector("#name")?.value || "";
-      const email = this.querySelector("#email")?.value || "";
-      const message = this.querySelector("#message")?.value || "";
-
-      // Basic validation
-      if (!name || !email || !message) {
-        showNotification("Please fill out all fields", "error");
+      if (!contactForm) {
+        console.log("Contact form not found!");
         return;
       }
 
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        showNotification("Please enter a valid email address", "error");
+      console.log("Contact form found, adding event listener");
+
+      // Make sure the form has the correct structure
+      const nameInput = contactForm.querySelector("#name");
+      const emailInput = contactForm.querySelector("#email");
+      const messageInput = contactForm.querySelector("#message");
+      const submitButton = contactForm.querySelector('button[type="submit"]');
+
+      if (!nameInput || !emailInput || !messageInput || !submitButton) {
+        console.log("Form elements are missing!");
         return;
       }
 
-      // Show loading state
-      const submitButton = this.querySelector('button[type="submit"]');
-      if (submitButton) {
+      // Add submit event listener directly to the form
+      contactForm.addEventListener("submit", function (e) {
+        // Always prevent default form submission
+        e.preventDefault();
+        console.log("Form submitted!");
+
+        // Get form values
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const message = messageInput.value.trim();
+
+        // Validate inputs
+        if (!name || !email || !message) {
+          showNotification("Please fill out all fields", "error");
+          return;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showNotification("Please enter a valid email address", "error");
+          return;
+        }
+
+        // Show loading state
         const originalText = submitButton.innerHTML;
         submitButton.innerHTML =
           '<i class="fas fa-spinner fa-spin"></i> Sending...';
         submitButton.disabled = true;
 
-        // Simulate server request
+        // Simulate submission (would be an AJAX request in production)
         setTimeout(() => {
           // Reset button
           submitButton.innerHTML = originalText;
           submitButton.disabled = false;
 
-          // Show success message
+          // Show success
           showNotification(
             "Your message has been sent successfully!",
             "success"
           );
 
           // Reset form
-          this.reset();
+          contactForm.reset();
         }, 1500);
-      }
+      });
+
+      // Also add a direct click handler to the button as a fallback
+      submitButton.addEventListener("click", function (e) {
+        // Check if click event is directly from button, not bubbled
+        if (e.target === submitButton || e.target.parentNode === submitButton) {
+          if (!contactForm.checkValidity()) {
+            contactForm.reportValidity();
+          } else {
+            const submitEvent = new Event("submit", {
+              bubbles: true,
+              cancelable: true,
+            });
+            contactForm.dispatchEvent(submitEvent);
+          }
+        }
+      });
+
+      console.log("Contact form setup complete!");
     });
   }
 
@@ -740,6 +781,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Add a notification system for better user feedback
+  // Notification system (if not already defined)
   function showNotification(message, type = "success") {
     // Create notification container if it doesn't exist
     let notificationContainer = document.getElementById(
@@ -759,91 +801,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const notification = document.createElement("div");
     notification.className = `notification ${type}`;
     notification.innerHTML = `
-      <div class="notification-content">
-          <i class="fas ${
-            type === "success"
-              ? "fa-check-circle"
-              : type === "error"
-              ? "fa-exclamation-circle"
-              : "fa-info-circle"
-          }"></i>
-          <span>${message}</span>
-      </div>
-      <button class="close-notification"><i class="fas fa-times"></i></button>
-    `;
-
-    // Notification styles
-    const notificationStyles = `
-      .notification {
-          background-color: white;
-          color: var(--dark-gray);
-          padding: 15px 20px;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-          margin-bottom: 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          animation: slideIn 0.3s forwards;
-          max-width: 350px;
-          border-left: 4px solid var(--primary-color);
-          opacity: 0;
-          transform: translateX(50px);
-      }
-      
-      .notification.success { border-left-color: var(--success); }
-      .notification.error { border-left-color: #dc3545; }
-      .notification.info { border-left-color: var(--primary-color); }
-      
-      .notification-content {
-          display: flex;
-          align-items: center;
-      }
-      
-      .notification-content i {
-          margin-right: 10px;
-          font-size: 18px;
-      }
-      
-      .notification.success i { color: var(--success); }
-      .notification.error i { color: #dc3545; }
-      .notification.info i { color: var(--primary-color); }
-      
-      .close-notification {
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: var(--dark-gray);
-          opacity: 0.5;
-          transition: opacity 0.2s;
-      }
-      
-      .close-notification:hover {
-          opacity: 1;
-      }
-      
-      @keyframes slideIn {
-          to {
-              opacity: 1;
-              transform: translateX(0);
-          }
-      }
-      
-      @keyframes slideOut {
-          to {
-              opacity: 0;
-              transform: translateX(50px);
-          }
-      }
-    `;
-
-    // Add styles if they don't exist
-    if (!document.getElementById("notification-styles")) {
-      const style = document.createElement("style");
-      style.id = "notification-styles";
-      style.textContent = notificationStyles;
-      document.head.appendChild(style);
-    }
+    <div class="notification-content">
+        <i class="fas ${
+          type === "success"
+            ? "fa-check-circle"
+            : type === "error"
+            ? "fa-exclamation-circle"
+            : "fa-info-circle"
+        }"></i>
+        <span>${message}</span>
+    </div>
+    <button class="close-notification"><i class="fas fa-times"></i></button>
+  `;
 
     // Add close button functionality
     notification
