@@ -3,37 +3,26 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
-const FormData = require('form-data');
 const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5678;
 
-
-/* Enable CORS with more specific options
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-})); */
-
-// Parse JSON and URL-encoded form data
+// Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the current directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Test route to verify the server is working
+// Test route
 app.get('/test', (req, res) => {
   res.send('Server is working!');
 });
 
-// Set up multer for handling file uploads
+// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Create uploads directory if it doesn't exist
     const uploadDir = path.join(__dirname, 'uploads');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);
@@ -41,7 +30,6 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    // Create unique filename
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
@@ -49,9 +37,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit to 5MB
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: function (req, file, cb) {
-    // Accept only image files
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return cb(new Error('Only JPG, JPEG, and PNG image files are allowed!'), false);
     }
@@ -59,13 +46,13 @@ const upload = multer({
   }
 });
 
-// Log all incoming requests
+// Request logging middleware
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
-// Handle image enhancement requests - explicitly define as POST
+// Image enhancement endpoint
 app.post('/enhance', upload.single('image'), async (req, res) => {
   console.log('POST /enhance received');
   try {
@@ -102,7 +89,6 @@ app.post('/enhance', upload.single('image'), async (req, res) => {
 // Function to enhance image using OpenAI DALL-E API
 async function enhanceImageWithOpenAI(base64Image) {
   try {
-    // Make sure you have your OpenAI API key in .env file
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     
     if (!OPENAI_API_KEY) {
@@ -129,7 +115,6 @@ async function enhanceImageWithOpenAI(base64Image) {
 
     console.log('OpenAI API response received');
     
-    // Extract and return the base64 image data
     return response.data.data[0].b64_json;
   } catch (error) {
     console.error('Error calling OpenAI API:', error.response?.data || error.message);
@@ -137,7 +122,7 @@ async function enhanceImageWithOpenAI(base64Image) {
   }
 }
 
-// Options request handler (for CORS preflight)
+// CORS preflight handling
 app.options('/enhance', cors());
 
 // Start the server

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RealtyEnhance | Professional Real Estate Image Enhancement</title>
     <link rel="stylesheet" href="styles.css" />
-    <link<
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
@@ -123,7 +123,7 @@
       </div>
     </section>
 
-    <!-- <section id="upload-section" class="upload-section">
+    <section id="upload-section" class="upload-section">
       <div class="container">
         <h2>Upload Your Images</h2>
         <div class="upload-container">
@@ -279,7 +279,7 @@
           </div>
         </div>
       </div>
-    </section> -->
+    </section>
 
     <section id="preview-section" class="preview-section hidden">
       <div class="container">
@@ -658,5 +658,13 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+      document
+        .getElementById("signInForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          window.location.href = "signin.html";
+        });
+    </script>
   </body>
 </html>
