@@ -2221,4 +2221,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }, 5000);
   };
+  //Adding Signin Listener
+  document
+    .getElementById("signin-btn")
+    .addEventListener("submit", function (event) {
+      event.preventDefault(); // Stop default form submission
+      window.location.href = "signin.html";
+    });
 });

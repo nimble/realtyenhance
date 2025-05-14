@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <div class="logo-container">
+            <svg class="site-logo" viewBox="0 0 100 100" width="40" height="40">
+              <!-- House Shape -->
+              <polygon
+                points="50,15 85,40 85,85 15,85 15,40"
+                fill="white"
+                stroke="#2c6cff"
+                stroke-width="3"
+                stroke-linejoin="round"
+              />
+  
+              <!-- Roof -->
+              <polygon
+                points="50,5 90,35 10,35"
+                fill="#2c6cff"
+                stroke="#2c6cff"
+                stroke-width="2"
+              />
+  
+              <!-- Door -->
+              <rect
+                x="40"
+                y="60"
+                width="20"
+                height="25"
+                fill="#5f9ea0"
+                rx="2"
+                ry="2"
+              />
+              <circle cx="45" cy="72.5" r="2" fill="white" />
+  
+              <!-- Windows -->
+              <rect
+                x="25"
+                y="50"
+                width="15"
+                height="15"
+                fill="#2c6cff"
+                stroke="white"
+                stroke-width="2"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                x="60"
+                y="50"
+                width="15"
+                height="15"
+                fill="#2c6cff"
+                stroke="white"
+                stroke-width="2"
+                rx="2"
+                ry="2"
+              />
+  
+              <!-- Sparkle Effects -->
+              <polygon
+                points="60,53 62,57 66,59 62,61 60,65 58,61 54,59 58,57"
+                fill="white"
+              />
+              <polygon
+                points="75,75 76,77 78,78 76,79 75,81 74,79 72,78 74,77"
+                fill="white"
+              />
+            </svg>
+            <h1><span class="highlight">Realty</span>Enhance</h1>
+          </div>
+          <p class="tagline">Professional Image Enhancement for Real Estate</p>
+        </div>
+      </div>
+    </header>
+  </body>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signin-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3e44a3;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="signin-container">
+    <h2>Sign In</h2>
+    <form action="dashboard.html" method="get">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Sign In</button>
+    </form>
+    <div class="footer">
+      <p>Don't have an account? <a href="#" id="signup">Sign up</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signup').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent default navigation
+      window.location.href = "signuppage.html";
+    });
+  </script>
+
+</body>
+</html>

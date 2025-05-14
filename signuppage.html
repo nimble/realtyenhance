@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up Page</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    /* Container for content */
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #007bff;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .google-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      background-color: #000000;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 16px;
+    }
+
+    .google-btn:hover {
+      background-color: #808080;
+    }
+
+    .google-icon {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sign Up Page</h2>
+    
+    <!-- Register Section -->
+    <h3>Register</h3>
+    <input type="email" id="registerEmail" placeholder="Email" required>
+    <input type="password" id="registerPassword" placeholder="Password" required>
+    <button onclick="register()">Register</button>
+
+    <!-- Login Section -->
+    <h3>Login</h3>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+
+    <!-- Google Sign-In Section -->
+    <h3>Or Sign in with Google</h3>
+    <div class="google-btn" onclick="googleSignIn()">
+      <span class="google-icon"></span>
+      <img src="https://www.gstatic.com/marketing-cms/assets/images/d5/dc/cfe9ce8b4425b410b49b7f2dd3f3/g.webp=s48-fcrop64=1,00000000ffffffff-rw" class="google-icon" alt="Google Icon" width="24" height="24"/>
+      Sign in with Google
+    </div>
+
+    <!-- Message Display -->
+    <p id="message" class="message"></p>
+  </div>
+
+  <!-- Firebase Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZqvf_3hKV5Uf8gsgQi3VFgKwe_1-ikvA",
+      authDomain: "realtyenchance.firebaseapp.com",
+      projectId: "realtyenchance",
+      storageBucket: "realtyenchance.firebasestorage.app",
+      messagingSenderId: "155668361105",
+      appId: "1:155668361105:web:1777c9b240b7b726d37430",
+      measurementId: "G-LJP0WZBHWW"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    // Register function
+    function register() {
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("message").innerText = "Registered successfully!";
+        })
+        .catch(error => {
+          document.getElementById("message").innerText = "Error: " + error.message;
+        });
+    }
+
+    // Login function
+    function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("message").innerText = "Login successful!";
+          event.preventDefault();
+          window.location.href = "index.html";
+        })
+        .catch(error => {
+          document.getElementById("message").innerText = "Error: " + error.message;
+        });
+    }
+
+    // Google Sign-In function
+    function googleSignIn() {
+      auth.signInWithPopup(provider)
+        .then(() => {
+          document.getElementById("message").innerText = "Google Sign-In successful!";
+          event.preventDefault();
+          window.location.href = "index.html";
+        })
+        .catch(error => {
+          document.getElementById("message").innerText = "Error: " + error.message;
+        });
+    }
+  </script>
+</body>
+</html>
