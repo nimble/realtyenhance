@@ -1385,4 +1385,840 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     addMessage: addMessage,
   };
+  // DOM Elements
+  const body = document.body;
+
+  // Insert the auth button in the header nav
+  const navEl = document.querySelector("header nav ul");
+  if (navEl) {
+    const authButtonHTML = `
+          <li class="auth-nav-item">
+              <a href="#" id="auth-button" class="btn btn-secondary">
+                  <i class="fas fa-user"></i> <span>Login / Sign Up</span>
+              </a>
+          </li>
+      `;
+    navEl.insertAdjacentHTML("beforeend", authButtonHTML);
+  }
+
+  // Inject auth modal HTML
+  fetch("auth-modal.html")
+    .then((response) => response.text())
+    .then((html) => {
+      body.insertAdjacentHTML("beforeend", html);
+      initAuthSystem();
+    })
+    .catch((error) => {
+      console.error("Error loading auth modal:", error);
+      // Fallback: Add the auth HTML directly to the body
+      const authHTML = `
+              <!-- Auth Modal HTML -->
+              <div id="auth-modal" class="modal-overlay">
+                  <div class="auth-container">
+                      <div class="auth-header">
+                          <div class="auth-tabs">
+                              <button class="auth-tab active" data-tab="login">Login</button>
+                              <button class="auth-tab" data-tab="signup">Sign Up</button>
+                          </div>
+                          <button class="close-modal"><i class="fas fa-times"></i></button>
+                      </div>
+                      
+                      <div class="auth-body">
+                          <!-- Login Form -->
+                          <form id="login-form" class="auth-form active">
+                              <div class="form-group">
+                                  <label for="login-email">Email</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-envelope"></i>
+                                      <input type="email" id="login-email" required placeholder="Enter your email">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label for="login-password">Password</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-lock"></i>
+                                      <input type="password" id="login-password" required placeholder="Enter your password">
+                                  </div>
+                              </div>
+                              <div class="form-options">
+                                  <label class="checkbox-container">
+                                      <input type="checkbox" id="remember-me">
+                                      <span class="checkmark"></span>
+                                      Remember me
+                                  </label>
+                                  <a href="#" class="forgot-password">Forgot password?</a>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-block">Login</button>
+                              <div class="social-login">
+                                  <p>Or continue with</p>
+                                  <div class="social-buttons">
+                                      <button type="button" class="social-button google">
+                                          <i class="fab fa-google"></i>
+                                      </button>
+                                      <button type="button" class="social-button facebook">
+                                          <i class="fab fa-facebook-f"></i>
+                                      </button>
+                                      <button type="button" class="social-button apple">
+                                          <i class="fab fa-apple"></i>
+                                      </button>
+                                  </div>
+                              </div>
+                          </form>
+                          
+                          <!-- Signup Form -->
+                          <form id="signup-form" class="auth-form">
+                              <div class="form-group">
+                                  <label for="signup-name">Full Name</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-user"></i>
+                                      <input type="text" id="signup-name" required placeholder="Enter your full name">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label for="signup-email">Email</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-envelope"></i>
+                                      <input type="email" id="signup-email" required placeholder="Enter your email">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label for="signup-password">Password</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-lock"></i>
+                                      <input type="password" id="signup-password" required placeholder="Create a password">
+                                      <div class="password-strength">
+                                          <div class="strength-meter">
+                                              <div class="strength-bar"></div>
+                                          </div>
+                                          <span class="strength-text">Password strength</span>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label for="signup-confirm">Confirm Password</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-lock"></i>
+                                      <input type="password" id="signup-confirm" required placeholder="Confirm your password">
+                                  </div>
+                              </div>
+                              <div class="form-options">
+                                  <label class="checkbox-container">
+                                      <input type="checkbox" id="terms-agree" required>
+                                      <span class="checkmark"></span>
+                                      I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="privacy-link">Privacy Policy</a>
+                                  </label>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                              <div class="social-login">
+                                  <p>Or sign up with</p>
+                                  <div class="social-buttons">
+                                      <button type="button" class="social-button google">
+                                          <i class="fab fa-google"></i>
+                                      </button>
+                                      <button type="button" class="social-button facebook">
+                                          <i class="fab fa-facebook-f"></i>
+                                      </button>
+                                      <button type="button" class="social-button apple">
+                                          <i class="fab fa-apple"></i>
+                                      </button>
+                                  </div>
+                              </div>
+                          </form>
+                          
+                          <!-- Forgot Password Form -->
+                          <form id="forgot-form" class="auth-form">
+                              <div class="form-header">
+                                  <h3>Reset Your Password</h3>
+                                  <p>Enter your email address and we'll send you a link to reset your password.</p>
+                              </div>
+                              <div class="form-group">
+                                  <label for="forgot-email">Email</label>
+                                  <div class="input-with-icon">
+                                      <i class="fas fa-envelope"></i>
+                                      <input type="email" id="forgot-email" required placeholder="Enter your email">
+                                  </div>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
+                              <button type="button" class="btn btn-secondary btn-block back-to-login">Back to Login</button>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- Account Settings Modal -->
+              <div id="account-settings-modal" class="modal-overlay">
+                  <!-- Account Settings Modal Content -->
+              </div>
+              
+              <!-- Enhanced Images Library Modal -->
+              <div id="images-library-modal" class="modal-overlay">
+                  <!-- Images Library Modal Content -->
+              </div>
+          `;
+      body.insertAdjacentHTML("beforeend", authHTML);
+      initAuthSystem();
+    });
+
+  // Initialize Auth System
+  function initAuthSystem() {
+    // Elements
+    const authButton = document.getElementById("auth-button");
+    const authModal = document.getElementById("auth-modal");
+    const authTabs = document.querySelectorAll(".auth-tab");
+    const authForms = document.querySelectorAll(".auth-form");
+    const closeModalBtns = document.querySelectorAll(".close-modal");
+    const forgotPasswordLink = document.querySelector(".forgot-password");
+    const backToLoginBtn = document.querySelector(".back-to-login");
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    const forgotForm = document.getElementById("forgot-form");
+    const signupPassword = document.getElementById("signup-password");
+    const passwordStrengthBar = document.querySelector(".strength-bar");
+    const passwordStrengthText = document.querySelector(".strength-text");
+
+    // Mock user data for demo
+    const users = [
+      {
+        id: 1,
+        name: "Demo User",
+        email: "demo@example.com",
+        password: "password123", // In a real app, this would be hashed
+        images: [],
+      },
+    ];
+
+    let currentUser = null;
+
+    // Check for logged in user in local storage
+    const checkLoggedInUser = () => {
+      const savedUser = localStorage.getItem("currentUser");
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        updateUIForLoggedInUser();
+      }
+    };
+
+    // Update UI for logged in user
+    const updateUIForLoggedInUser = () => {
+      if (authButton) {
+        authButton.innerHTML = `<i class="fas fa-user-circle"></i> <span>${
+          currentUser.name.split(" ")[0]
+        }</span>`;
+        authButton.classList.add("logged-in");
+      }
+    };
+
+    // Update UI for logged out user
+    const updateUIForLoggedOutUser = () => {
+      if (authButton) {
+        authButton.innerHTML = `<i class="fas fa-user"></i> <span>Login / Sign Up</span>`;
+        authButton.classList.remove("logged-in");
+      }
+    };
+
+    // Toggle auth modal
+    if (authButton) {
+      authButton.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        if (currentUser) {
+          // Show user dropdown menu
+          const accountDropdown = document.getElementById("account-dropdown");
+          if (accountDropdown) {
+            // Update user info
+            const userName = accountDropdown.querySelector(".user-name");
+            const userEmail = accountDropdown.querySelector(".user-email");
+
+            if (userName && userEmail) {
+              userName.textContent = currentUser.name;
+              userEmail.textContent = currentUser.email;
+            }
+
+            // Toggle dropdown
+            accountDropdown.classList.toggle("active");
+
+            // Close dropdown when clicking outside
+            const closeDropdown = (event) => {
+              if (
+                !accountDropdown.contains(event.target) &&
+                !authButton.contains(event.target)
+              ) {
+                accountDropdown.classList.remove("active");
+                document.removeEventListener("click", closeDropdown);
+              }
+            };
+
+            // Add event listener with a delay to prevent immediate closing
+            setTimeout(() => {
+              document.addEventListener("click", closeDropdown);
+            }, 100);
+          }
+        } else {
+          // Show auth modal for login/signup
+          showModal(authModal);
+        }
+      });
+    }
+
+    // Tab switching
+    authTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const targetTab = tab.getAttribute("data-tab");
+
+        // Update active tab
+        authTabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        // Show corresponding form
+        authForms.forEach((form) => {
+          form.classList.remove("active");
+          if (form.id === `${targetTab}-form`) {
+            form.classList.add("active");
+          }
+        });
+      });
+    });
+
+    // Close modal
+    closeModalBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const modal = btn.closest(".modal-overlay");
+        hideModal(modal);
+      });
+    });
+
+    // Forgot password link
+    if (forgotPasswordLink) {
+      forgotPasswordLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        authForms.forEach((form) => form.classList.remove("active"));
+        forgotForm.classList.add("active");
+      });
+    }
+
+    // Back to login button
+    if (backToLoginBtn) {
+      backToLoginBtn.addEventListener("click", () => {
+        authForms.forEach((form) => form.classList.remove("active"));
+        loginForm.classList.add("active");
+      });
+    }
+
+    // Password strength meter
+    if (signupPassword) {
+      signupPassword.addEventListener("input", () => {
+        const password = signupPassword.value;
+        const strengthScore = calculatePasswordStrength(password);
+
+        // Update strength bar
+        passwordStrengthBar.style.width = `${strengthScore}%`;
+
+        // Set color based on strength
+        if (strengthScore < 30) {
+          passwordStrengthBar.style.backgroundColor = "#e74c3c"; // Weak
+          passwordStrengthText.textContent = "Weak password";
+        } else if (strengthScore < 60) {
+          passwordStrengthBar.style.backgroundColor = "#f39c12"; // Medium
+          passwordStrengthText.textContent = "Medium strength";
+        } else {
+          passwordStrengthBar.style.backgroundColor = "#2ecc71"; // Strong
+          passwordStrengthText.textContent = "Strong password";
+        }
+      });
+    }
+
+    // Login form submission
+    if (loginForm) {
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        const rememberMe = document.getElementById("remember-me").checked;
+
+        // Validate inputs
+        if (!email || !password) {
+          showNotification("Please fill in all fields", "error");
+          return;
+        }
+
+        // For demo purposes, check against mock users
+        const user = users.find(
+          (u) => u.email === email && u.password === password
+        );
+
+        if (user) {
+          // Login successful
+          currentUser = user;
+
+          // Save to local storage if remember me is checked
+          if (rememberMe) {
+            localStorage.setItem("currentUser", JSON.stringify(user));
+          }
+
+          // Update UI
+          updateUIForLoggedInUser();
+
+          // Close modal
+          hideModal(authModal);
+
+          // Show success message
+          showNotification("Login successful! Welcome back.", "success");
+        } else {
+          // Login failed
+          showNotification("Invalid email or password", "error");
+        }
+      });
+    }
+
+    // Signup form submission
+    if (signupForm) {
+      signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("signup-name").value;
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
+        const confirmPassword = document.getElementById("signup-confirm").value;
+        const termsAgreed = document.getElementById("terms-agree").checked;
+
+        // Validate inputs
+        if (!name || !email || !password || !confirmPassword) {
+          showNotification("Please fill in all fields", "error");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showNotification("Passwords do not match", "error");
+          return;
+        }
+
+        if (!termsAgreed) {
+          showNotification(
+            "You must agree to the terms and privacy policy",
+            "error"
+          );
+          return;
+        }
+
+        // Check if email already exists
+        if (users.some((u) => u.email === email)) {
+          showNotification("Email already in use", "error");
+          return;
+        }
+
+        // Create new user
+        const newUser = {
+          id: users.length + 1,
+          name,
+          email,
+          password, // In a real app, this would be hashed
+          images: [],
+        };
+
+        // Add to users array
+        users.push(newUser);
+
+        // Set as current user
+        currentUser = newUser;
+
+        // Save to local storage
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+
+        // Update UI
+        updateUIForLoggedInUser();
+
+        // Close modal
+        hideModal(authModal);
+
+        // Show success message
+        showNotification("Account created successfully!", "success");
+      });
+    }
+
+    // Forgot password form submission
+    if (forgotForm) {
+      forgotForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("forgot-email").value;
+
+        // Validate email
+        if (!email) {
+          showNotification("Please enter your email", "error");
+          return;
+        }
+
+        // Check if email exists
+        if (!users.some((u) => u.email === email)) {
+          showNotification("No account found with this email", "error");
+          return;
+        }
+
+        // Show success message (in a real app, this would send an email)
+        showNotification(
+          "Password reset link sent! Please check your email.",
+          "success"
+        );
+
+        // Go back to login form
+        authForms.forEach((form) => form.classList.remove("active"));
+        loginForm.classList.add("active");
+      });
+    }
+
+    // Implement logout functionality
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".logout-link")) {
+        e.preventDefault();
+
+        // Clear current user
+        currentUser = null;
+        localStorage.removeItem("currentUser");
+
+        // Update UI
+        updateUIForLoggedOutUser();
+
+        // Close user dropdown if open
+        const accountDropdown = document.getElementById("account-dropdown");
+        if (accountDropdown) {
+          accountDropdown.classList.remove("active");
+        }
+
+        // Show success message
+        showNotification("You have been logged out", "success");
+      }
+    });
+
+    // Account settings modal
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("#account-settings")) {
+        e.preventDefault();
+
+        // Close account dropdown
+        const accountDropdown = document.getElementById("account-dropdown");
+        if (accountDropdown) {
+          accountDropdown.classList.remove("active");
+        }
+
+        // Show account settings modal
+        const accountSettingsModal = document.getElementById(
+          "account-settings-modal"
+        );
+        if (accountSettingsModal) {
+          showModal(accountSettingsModal);
+
+          // Fill form with user data
+          const nameInput = document.getElementById("profile-first-name");
+          const emailInput = document.getElementById("profile-email");
+
+          if (nameInput && emailInput && currentUser) {
+            const nameParts = currentUser.name.split(" ");
+            nameInput.value = nameParts[0] || "";
+            document.getElementById("profile-last-name").value =
+              nameParts.slice(1).join(" ") || "";
+            emailInput.value = currentUser.email || "";
+          }
+        }
+      }
+    });
+
+    // My Images modal
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("#my-images")) {
+        e.preventDefault();
+
+        // Close account dropdown
+        const accountDropdown = document.getElementById("account-dropdown");
+        if (accountDropdown) {
+          accountDropdown.classList.remove("active");
+        }
+
+        // Show images library modal
+        const imagesLibraryModal = document.getElementById(
+          "images-library-modal"
+        );
+        if (imagesLibraryModal) {
+          showModal(imagesLibraryModal);
+        }
+      }
+    });
+
+    // Settings tabs
+    const settingsTabs = document.querySelectorAll(".settings-tab");
+    settingsTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const targetTab = tab.getAttribute("data-tab");
+
+        // Update active tab
+        settingsTabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        // Show corresponding panel
+        const panels = document.querySelectorAll(".settings-panel");
+        panels.forEach((panel) => {
+          panel.classList.remove("active");
+          if (panel.id === `${targetTab}-panel`) {
+            panel.classList.add("active");
+          }
+        });
+      });
+    });
+
+    // Library view options
+    const viewOptions = document.querySelectorAll(".view-option");
+    const libraryContent = document.querySelector(".library-content");
+
+    viewOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        const viewType = option.getAttribute("data-view");
+
+        // Update active option
+        viewOptions.forEach((o) => o.classList.remove("active"));
+        option.classList.add("active");
+
+        // Update view
+        if (libraryContent) {
+          libraryContent.className = `library-content ${viewType}-view`;
+        }
+      });
+    });
+
+    // Library filters
+    const filterOptions = document.querySelectorAll(".filter-option");
+
+    filterOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        // Update active filter in the same group
+        const filterGroup = option.closest(".filter-group");
+        if (filterGroup) {
+          filterGroup
+            .querySelectorAll(".filter-option")
+            .forEach((o) => o.classList.remove("active"));
+          option.classList.add("active");
+        }
+
+        // Apply filter (in a real app, this would filter the images)
+        // For demo purposes, we'll just show a notification
+        const filterType = option.getAttribute("data-filter");
+        if (filterType === "custom") {
+          // Show date picker (not implemented in this demo)
+          showNotification("Date range picker would open here", "info");
+        }
+      });
+    });
+
+    // Utility function to show modal
+    function showModal(modal) {
+      if (!modal) return;
+
+      // Prevent body scrolling
+      document.body.style.overflow = "hidden";
+
+      // Show modal
+      modal.classList.add("active");
+
+      // Close modal on background click
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          hideModal(modal);
+        }
+      });
+
+      // Close on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          hideModal(modal);
+        }
+      });
+    }
+
+    // Utility function to hide modal
+    function hideModal(modal) {
+      if (!modal) return;
+
+      // Allow body scrolling
+      document.body.style.overflow = "";
+
+      // Hide modal
+      modal.classList.remove("active");
+    }
+
+    // Password strength calculation
+    function calculatePasswordStrength(password) {
+      if (!password) return 0;
+
+      let score = 0;
+
+      // Length
+      score += Math.min(password.length * 4, 40);
+
+      // Lowercase
+      if (/[a-z]/.test(password)) score += 10;
+
+      // Uppercase
+      if (/[A-Z]/.test(password)) score += 10;
+
+      // Numbers
+      if (/[0-9]/.test(password)) score += 10;
+
+      // Special characters
+      if (/[^a-zA-Z0-9]/.test(password)) score += 10;
+
+      // Variety
+      const variety = new Set(password.split("")).size;
+      score += Math.min(variety * 2, 20);
+
+      return Math.min(score, 100);
+    }
+
+    // Notification function (uses the existing notification system)
+    function showNotification(message, type = "success") {
+      // Check if the notification function exists in the global scope
+      if (typeof window.showNotification === "function") {
+        window.showNotification(message, type);
+      } else {
+        // Fallback if notification function doesn't exist
+        alert(message);
+      }
+    }
+
+    // Check for logged in user on load
+    checkLoggedInUser();
+  }
+
+  // Make notification function globally available
+  window.showNotification = function (message, type = "success") {
+    // Create notification container if it doesn't exist
+    let notificationContainer = document.getElementById(
+      "notification-container"
+    );
+    if (!notificationContainer) {
+      notificationContainer = document.createElement("div");
+      notificationContainer.id = "notification-container";
+      notificationContainer.style.position = "fixed";
+      notificationContainer.style.top = "100px";
+      notificationContainer.style.right = "20px";
+      notificationContainer.style.zIndex = "9999";
+      document.body.appendChild(notificationContainer);
+    }
+
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+          <div class="notification-content">
+              <i class="fas ${
+                type === "success"
+                  ? "fa-check-circle"
+                  : type === "error"
+                  ? "fa-exclamation-circle"
+                  : "fa-info-circle"
+              }"></i>
+              <span>${message}</span>
+          </div>
+          <button class="close-notification"><i class="fas fa-times"></i></button>
+      `;
+
+    // Notification styles
+    if (!document.getElementById("notification-styles")) {
+      const notificationStyles = `
+              .notification {
+                  background-color: white;
+                  color: var(--dark-gray);
+                  padding: 15px 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+                  margin-bottom: 10px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  animation: slideIn 0.3s forwards;
+                  max-width: 350px;
+                  border-left: 4px solid var(--primary-color);
+                  opacity: 0;
+                  transform: translateX(50px);
+              }
+              
+              .notification.success { border-left-color: #2ecc71; }
+              .notification.error { border-left-color: #e74c3c; }
+              .notification.info { border-left-color: var(--primary-color); }
+              
+              .notification-content {
+                  display: flex;
+                  align-items: center;
+              }
+              
+              .notification-content i {
+                  margin-right: 10px;
+                  font-size: 18px;
+              }
+              
+              .notification.success i { color: #2ecc71; }
+              .notification.error i { color: #e74c3c; }
+              .notification.info i { color: var(--primary-color); }
+              
+              .close-notification {
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  color: var(--dark-gray);
+                  opacity: 0.5;
+                  transition: opacity 0.2s;
+              }
+              
+              .close-notification:hover {
+                  opacity: 1;
+              }
+              
+              @keyframes slideIn {
+                  to {
+                      opacity: 1;
+                      transform: translateX(0);
+                  }
+              }
+              
+              @keyframes slideOut {
+                  to {
+                      opacity: 0;
+                      transform: translateX(50px);
+                  }
+              }
+          `;
+      const style = document.createElement("style");
+      style.id = "notification-styles";
+      style.textContent = notificationStyles;
+      document.head.appendChild(style);
+    }
+
+    // Add close button functionality
+    notification
+      .querySelector(".close-notification")
+      .addEventListener("click", () => {
+        notification.style.animation = "slideOut 0.3s forwards";
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      });
+
+    // Add to container
+    notificationContainer.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.style.animation = "slideIn 0.3s forwards";
+    }, 10);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.style.animation = "slideOut 0.3s forwards";
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.remove();
+          }
+        }, 300);
+      }
+    }, 5000);
+  };
 });
