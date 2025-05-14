@@ -1367,3 +1367,217 @@ footer::before {
     background-repeat: no-repeat;
     filter: drop-shadow(0 2px 3px rgba(255, 255, 255, 0.1));
 }
+
+/* Add this CSS to styles.css */
+
+/* Enhanced Auth Navigation */
+.auth-nav-item {
+    margin-left: 10px !important;
+  }
+  
+  /* Make sure we have proper spacing between login and signup buttons */
+  header nav ul {
+    align-items: center;
+  }
+  
+  /* User dropdown styling improvements */
+  .account-dropdown {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 280px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    padding: 15px 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  .account-dropdown.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 15px;
+  }
+  
+  .user-avatar {
+    width: 42px;
+    height: 42px;
+    background-color: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+  }
+  
+  .user-avatar i {
+    font-size: 22px;
+    color: var(--primary-color);
+  }
+  
+  .user-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
+  }
+  
+  .user-email {
+    font-size: 13px;
+    color: var(--dark-gray);
+    opacity: 0.8;
+  }
+  
+  .dropdown-divider {
+    border-top: 1px solid var(--medium-gray);
+    margin: 0 0 10px;
+  }
+  
+  .dropdown-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .dropdown-menu li {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .dropdown-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdown-menu li a:hover {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+  }
+  
+  .dropdown-menu li a i {
+    margin-right: 10px;
+    font-size: 16px;
+    width: 18px;
+    text-align: center;
+  }
+  
+  .logout-link {
+    color: #dc3545 !important;
+  }
+  
+  .logout-link:hover {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+  }
+  
+  /* User auth button styles */
+  .auth-nav-item .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .auth-nav-item .btn.logged-in {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+  }
+  
+  .auth-nav-item .btn.logged-in:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  /* Notification system enhancements */
+  .notification {
+    background-color: white;
+    color: var(--dark-gray);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideIn 0.3s forwards;
+    max-width: 350px;
+    border-left: 4px solid var(--primary-color);
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  
+  .notification.success { border-left-color: var(--success); }
+  .notification.error { border-left-color: #dc3545; }
+  .notification.info { border-left-color: var(--primary-color); }
+  
+  .notification-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .notification-content i {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+  
+  .notification.success i { color: var(--success); }
+  .notification.error i { color: #dc3545; }
+  .notification.info i { color: var(--primary-color); }
+  
+  .close-notification {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark-gray);
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  
+  .close-notification:hover {
+    opacity: 1;
+  }
+  
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideOut {
+    to {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+  }
+  
+  /* Mobile responsiveness for auth buttons */
+  @media screen and (max-width: 768px) {
+    .auth-nav-item {
+      margin: 10px 5px !important;
+    }
+    
+    .account-dropdown {
+      right: 10px;
+      top: 70px;
+      width: calc(100% - 20px);
+      max-width: 300px;
+    }
+  }

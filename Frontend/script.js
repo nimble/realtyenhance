@@ -366,8 +366,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Initialize contact form with email functionality
+  // Add this code to script.js
+
+  // Fixed contact form functionality
   function initializeContactForm() {
+    const contactForm = document.querySelector(".contact-form");
     if (!contactForm) return;
 
     contactForm.addEventListener("submit", function (e) {
@@ -391,9 +394,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // In a real implementation, this would send data to a server endpoint
-      // For now, we'll simulate a successful form submission
-
       // Show loading state
       const submitButton = this.querySelector('button[type="submit"]');
       if (submitButton) {
@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Show success message
           showNotification(
-            "Your message has been sent successfully to admin@realtyenhance.com",
+            "Your message has been sent successfully!",
             "success"
           );
 
@@ -1710,53 +1710,67 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Auth System
   function initializeAuthSystem() {
-    // Make notification function globally available
-    window.showNotification = showNotification;
-
     // DOM Elements
-    const body = document.body;
     const signInBtn = document.getElementById("signIn-Btn");
+    const navEl = document.querySelector("header nav ul");
+    const existingAuthLi = document.querySelector(".auth-nav-item");
 
-    // Add event listener to the sign-in button if it exists
-    if (signInBtn) {
-      const signInForm = signInBtn.closest("form");
-      if (signInForm) {
-        signInForm.addEventListener("submit", function (event) {
-          event.preventDefault();
-          window.location.href = "signin.html";
-        });
+    // Check if we already have a user
+    const currentUser = JSON.parse(
+      localStorage.getItem("currentUser") || "null"
+    );
+
+    // Handle the navigation auth button
+    if (navEl) {
+      // Remove existing auth item if it exists to prevent duplicates
+      if (existingAuthLi) {
+        existingAuthLi.remove();
+      }
+
+      // Create new auth buttons based on login state
+      if (currentUser) {
+        // User is logged in, show user info
+        const userAuthHTML = `
+          <li class="auth-nav-item">
+            <a href="#" id="auth-button" class="btn btn-primary logged-in">
+              <i class="fas fa-user-circle"></i> <span>${
+                currentUser.email.split("@")[0]
+              }</span>
+            </a>
+          </li>
+        `;
+        navEl.insertAdjacentHTML("beforeend", userAuthHTML);
+
+        // Add event listener for dropdown
+        const authButton = document.getElementById("auth-button");
+        if (authButton) {
+          authButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            toggleUserDropdown();
+          });
+        }
+      } else {
+        // User is not logged in, show login/signup options
+        const authButtonsHTML = `
+          <li class="auth-nav-item">
+            <a href="signin.html" id="auth-login" class="btn btn-secondary">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+          </li>
+          <li class="auth-nav-item">
+            <a href="signuppage.html" id="auth-signup" class="btn btn-primary">
+              <i class="fas fa-user-plus"></i> Sign Up
+            </a>
+          </li>
+        `;
+        navEl.insertAdjacentHTML("beforeend", authButtonsHTML);
       }
     }
 
-    // Insert the auth button in the header nav if it doesn't exist
-    const navEl = document.querySelector("header nav ul");
-    if (navEl && !document.getElementById("auth-button")) {
-      const authButtonHTML = `
-        <li class="auth-nav-item">
-            <a href="#" id="auth-button" class="btn btn-secondary">
-                <i class="fas fa-user"></i> <span>Login / Sign Up</span>
-            </a>
-        </li>
-      `;
-      navEl.insertAdjacentHTML("beforeend", authButtonHTML);
-
-      // Add event listener to the newly created button
-      const authButton = document.getElementById("auth-button");
-      if (authButton) {
-        authButton.addEventListener("click", function (e) {
-          e.preventDefault();
-          // Check if we already have a user
-          const currentUser = JSON.parse(
-            localStorage.getItem("currentUser") || "null"
-          );
-          if (currentUser) {
-            toggleUserDropdown();
-          } else {
-            // Navigate to signin page
-            window.location.href = "signin.html";
-          }
-        });
-      }
+    // Remove the old sign-in form if it exists (to prevent duplicate buttons)
+    const signInForm = document.getElementById("signInForm");
+    if (signInForm) {
+      signInForm.remove();
     }
 
     // Function to toggle user dropdown menu
@@ -1773,8 +1787,10 @@ document.addEventListener("DOMContentLoaded", function () {
               <i class="fas fa-user-circle"></i>
             </div>
             <div class="user-details">
-              <span class="user-name">User Name</span>
-              <span class="user-email">user@example.com</span>
+              <span class="user-name">${
+                currentUser.name || currentUser.email.split("@")[0]
+              }</span>
+              <span class="user-email">${currentUser.email}</span>
             </div>
           </div>
           <div class="dropdown-divider"></div>
@@ -1786,195 +1802,12 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         document.body.appendChild(accountDropdown);
 
-        // Add styles for the dropdown
-        if (!document.getElementById("dropdown-styles")) {
-          const dropdownStyles = document.createElement("style");
-          dropdownStyles.id = "dropdown-styles";
-          dropdownStyles.textContent = `
-            .account-dropdown {
-              position: absolute;
-              top: 80px;
-              right: 20px;
-              width: 280px;
-              background: white;
-              border-radius: 10px;
-              box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-              z-index: 1000;
-              padding: 15px 0;
-              opacity: 0;
-              transform: translateY(-10px);
-              pointer-events: none;
-              transition: all 0.3s ease;
-            }
-            
-            .account-dropdown.active {
-              opacity: 1;
-              transform: translateY(0);
-              pointer-events: all;
-            }
-            
-            .user-info {
-              display: flex;
-              align-items: center;
-              padding: 0 20px 15px;
-            }
-            
-            .user-avatar {
-              width: 42px;
-              height: 42px;
-              background-color: var(--primary-light);
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              margin-right: 15px;
-            }
-            
-            .user-avatar i {
-              font-size: 22px;
-              color: var(--primary-color);
-            }
-            
-            .user-details {
-              display: flex;
-              flex-direction: column;
-            }
-            
-            .user-name {
-              font-weight: 600;
-              font-size: 15px;
-              margin-bottom: 3px;
-            }
-            
-            .user-email {
-              font-size: 13px;
-              color: var(--dark-gray);
-              opacity: 0.8;
-            }
-            
-            .dropdown-divider {
-              border-top: 1px solid var(--medium-gray);
-              margin: 0 0 10px;
-            }
-            
-            .dropdown-menu {
-              list-style: none;
-              padding: 0;
-              margin: 0;
-            }
-            
-            .dropdown-menu li {
-              margin: 0;
-              padding: 0;
-            }
-            
-.dropdown-menu li a {
-              display: flex;
-              align-items: center;
-              padding: 10px 20px;
-              color: var(--text-color);
-              text-decoration: none;
-              font-size: 14px;
-              transition: background-color 0.2s;
-            }
-            
-            .dropdown-menu li a:hover {
-              background-color: var(--light-gray);
-              color: var(--primary-color);
-            }
-            
-            .dropdown-menu li a i {
-              margin-right: 10px;
-              font-size: 16px;
-              width: 18px;
-              text-align: center;
-            }
-            
-            .logout-link {
-              color: #dc3545 !important;
-            }
-            
-            .logout-link:hover {
-              background-color: rgba(220, 53, 69, 0.1) !important;
-            }
-
-            /* User auth button styles */
-            .auth-nav-item .btn {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-            }
-            
-            .auth-nav-item .btn.logged-in {
-              background-color: var(--primary-color);
-              color: white;
-              border-color: var(--primary-color);
-            }
-            
-            .auth-nav-item .btn.logged-in:hover {
-              background-color: var(--primary-dark);
-            }
-          `;
-          document.head.appendChild(dropdownStyles);
-        }
-
-        // Add event listeners to dropdown items
-        const accountSettings = document.getElementById("account-settings");
-        const myImages = document.getElementById("my-images");
-        const logoutLink = document.querySelector(".logout-link");
-
-        if (accountSettings) {
-          accountSettings.addEventListener("click", function (e) {
-            e.preventDefault();
-            accountDropdown.classList.remove("active");
-            showNotification("Account settings feature coming soon!", "info");
-          });
-        }
-
-        if (myImages) {
-          myImages.addEventListener("click", function (e) {
-            e.preventDefault();
-            accountDropdown.classList.remove("active");
-            showNotification("Image library feature coming soon!", "info");
-          });
-        }
-
-        if (logoutLink) {
-          logoutLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            localStorage.removeItem("currentUser");
-            accountDropdown.classList.remove("active");
-            showNotification(
-              "You have been logged out successfully",
-              "success"
-            );
-
-            // Update auth button
-            const authButton = document.getElementById("auth-button");
-            if (authButton) {
-              authButton.innerHTML = `<i class="fas fa-user"></i> <span>Login / Sign Up</span>`;
-              authButton.classList.remove("logged-in");
-            }
-          });
-        }
+        // Add dropdown event handlers
+        setupDropdownEvents(accountDropdown);
       }
 
       // Toggle active state
       accountDropdown.classList.toggle("active");
-
-      // Update user info if we have a current user
-      const currentUser = JSON.parse(
-        localStorage.getItem("currentUser") || "null"
-      );
-      if (currentUser && accountDropdown.classList.contains("active")) {
-        const userName = accountDropdown.querySelector(".user-name");
-        const userEmail = accountDropdown.querySelector(".user-email");
-
-        if (userName && userEmail) {
-          userName.textContent = currentUser.name || "User";
-          userEmail.textContent = currentUser.email || "user@example.com";
-        }
-      }
 
       // Close dropdown when clicking outside
       if (accountDropdown.classList.contains("active")) {
@@ -1991,6 +1824,41 @@ document.addEventListener("DOMContentLoaded", function () {
           };
           document.addEventListener("click", closeDropdown);
         }, 100);
+      }
+    }
+
+    // Setup event listeners for dropdown items
+    function setupDropdownEvents(dropdown) {
+      const accountSettings = dropdown.querySelector("#account-settings");
+      const myImages = dropdown.querySelector("#my-images");
+      const logoutLink = dropdown.querySelector(".logout-link");
+
+      if (accountSettings) {
+        accountSettings.addEventListener("click", function (e) {
+          e.preventDefault();
+          dropdown.classList.remove("active");
+          showNotification("Account settings feature coming soon!", "info");
+        });
+      }
+
+      if (myImages) {
+        myImages.addEventListener("click", function (e) {
+          e.preventDefault();
+          dropdown.classList.remove("active");
+          showNotification("Image library feature coming soon!", "info");
+        });
+      }
+
+      if (logoutLink) {
+        logoutLink.addEventListener("click", function (e) {
+          e.preventDefault();
+          localStorage.removeItem("currentUser");
+          dropdown.classList.remove("active");
+          showNotification("You have been logged out successfully", "success");
+
+          // Refresh page to update UI
+          window.location.reload();
+        });
       }
     }
   }

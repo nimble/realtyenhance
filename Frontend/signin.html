@@ -287,11 +287,13 @@
       </div>
     </div>
 
+    // Add this code to the bottom of signin.html, replacing the existing script
+
     <script>
       document
         .getElementById("signinForm")
         .addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent default form submission
+          event.preventDefault();
 
           // Get form values
           const username = document.getElementById("username").value;
@@ -303,8 +305,24 @@
             return;
           }
 
-          // In a real app, you would authenticate with your backend here
-          // For now, we'll just redirect to the dashboard
+          // Create a user object to store in localStorage
+          const user = {
+            id: 1,
+            name: username.includes("@") ? username.split("@")[0] : username,
+            email: username.includes("@")
+              ? username
+              : username + "@example.com",
+            plan: "Professional",
+            joinDate: new Date().toISOString(),
+          };
+
+          // Save to localStorage
+          localStorage.setItem("currentUser", JSON.stringify(user));
+
+          // Show success message
+          alert("Login successful!");
+
+          // Redirect to homepage
           window.location.href = "index.html";
         });
     </script>
