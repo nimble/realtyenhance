@@ -58,6 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Check for logged in user
   checkLoggedInUser();
+  
+  // 
+  fixHeaderLayout()
 
   // Functions
   function initializeAnimations() {
@@ -1962,4 +1965,40 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
+  function fixHeaderLayout() {
+    const header = document.querySelector("header");
+    const logoContainer = document.querySelector(".logo-container");
+    const tagline = document.querySelector(".tagline");
+
+    if (header && logoContainer && tagline) {
+      // Ensure the header has a fixed height
+      header.style.height = "80px";
+
+      // Make sure the logo container is properly aligned
+      logoContainer.style.display = "flex";
+      logoContainer.style.alignItems = "center";
+      logoContainer.style.gap = "12px";
+
+      // Make sure the tagline is properly positioned
+      tagline.style.margin = "5px 0 0 0";
+      tagline.style.padding = "0";
+      tagline.style.lineHeight = "1.2";
+      tagline.style.whiteSpace = "nowrap";
+
+      // Force a repaint to apply the styles immediately
+      header.style.opacity = "0.99";
+      setTimeout(() => {
+        header.style.opacity = "1";
+      }, 10);
+    }
+  }
+  // Fix any auth buttons
+  const authButtons = document.querySelectorAll(".auth-nav-item .btn");
+  authButtons.forEach((button) => {
+    button.style.display = "inline-flex";
+    button.style.alignItems = "center";
+    button.style.padding = "10px 20px";
+    button.style.height = "auto";
+    button.style.minWidth = "80px";
+  });
 });
