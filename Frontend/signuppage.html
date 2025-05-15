@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up - RealtyEnhance</title>
     <link rel="stylesheet" href="styles.css" />
+      <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -381,6 +384,16 @@
             </div>
 
             <div class="form-group">
+              <label for="registerUsername">Username</label>
+              <input
+                type="text"
+                id="registerUsername"
+                name="registerUsername"
+                required
+              />
+            </div>
+
+            <div class="form-group">
               <label for="registerPassword">Password</label>
               <input
                 type="password"
@@ -430,6 +443,21 @@
     </div>
 
     <script>
+      const firebaseConfig = {
+      apiKey: "AIzaSyDZqvf_3hKV5Uf8gsgQi3VFgKwe_1-ikvA",
+      authDomain: "realtyenchance.firebaseapp.com",
+      projectId: "realtyenchance",
+      storageBucket: "realtyenchance.firebasestorage.app",
+      messagingSenderId: "155668361105",
+      appId: "1:155668361105:web:1777c9b240b7b726d37430",
+      measurementId: "G-LJP0WZBHWW"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const provider = new firebase.auth.GoogleAuthProvider();
+
       // Show message function
       function showMessage(text, type = "success") {
         const messageElement = document.getElementById("message");
@@ -450,6 +478,7 @@
           e.preventDefault();
 
           const registerEmail = document.getElementById("registerEmail");
+          const registerUsername = document.getElementById("registerUsername");
           const registerPassword = document.getElementById("registerPassword");
           const confirmPassword = document.getElementById("confirmPassword");
 
@@ -462,45 +491,54 @@
           // Create user object
           const user = {
             id: 1,
-            name: registerEmail.value.split("@")[0],
+            name: registerUsername.value,
             email: registerEmail.value,
             plan: "Basic",
             joinDate: new Date().toISOString(),
           };
 
-          // Save to localStorage
-          localStorage.setItem("currentUser", JSON.stringify(user));
-
-          showMessage("Account created successfully!");
-
-          // Redirect to home page after 1 second
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
+          auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value)
+          .then(() => {
+            showMessage("Account created successfully!");
+            // Save to localStorage
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            showMessage("Account created successfully!");
+            // Redirect to home page after 1 second
+            setTimeout(() => {
+              window.location.href = "index.html";
+            }, 1000);
+          })
+          .catch(error => {
+            showMessage("Error: " + error.message);
+          });
         });
 
       // Google Sign-In
       document
         .getElementById("googleSignIn")
         .addEventListener("click", function () {
-          // Create a mock Google user
-          const user = {
+          // Firebase auth for google sign in
+        auth.signInWithPopup(provider)
+          .then(() => {
+            const gmailUser = auth.currentUser;
+            const user = {
             id: 2,
-            name: "Google User",
-            email: "googleuser@example.com",
+            name: gmailUser.name,
+            email: gmailUser.email,
             plan: "Basic",
             joinDate: new Date().toISOString(),
           };
-
-          // Save to localStorage
-          localStorage.setItem("currentUser", JSON.stringify(user));
-
-          showMessage("Google Sign-In successful!");
-
-          // Redirect to home page after 1 second
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
+            showMessage("Google Sign-In successful!");
+            // Save to localStorage
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            // Redirect to home page after 1 second
+            setTimeout(() => {
+              window.location.href = "index.html";
+            }, 1000);
+          })
+          .catch(error => {
+            showMessage("Error: " + error.message);
+          });
         });
     </script>
   </body>
