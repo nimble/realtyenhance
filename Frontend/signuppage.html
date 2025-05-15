@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up - RealtyEnhance</title>
     <link rel="stylesheet" href="styles.css" />
+     <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -146,49 +149,6 @@
         font-size: 14px;
         color: #666;
         margin-top: 5px;
-      }
-
-      .divider {
-        display: flex;
-        align-items: center;
-        margin: 20px 0;
-      }
-
-      .divider::before,
-      .divider::after {
-        content: "";
-        flex: 1;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .divider-text {
-        padding: 0 10px;
-        color: #666;
-      }
-
-      .google-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 12px;
-        background-color: #fff;
-        color: #333;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 15px;
-        font-size: 16px;
-        font-weight: 500;
-        transition: all 0.3s;
-      }
-
-      .google-btn:hover {
-        background-color: #f8f8f8;
-        border-color: #ccc;
-      }
-
-      .google-icon {
-        margin-right: 10px;
       }
 
       .message {
@@ -381,6 +341,16 @@
             </div>
 
             <div class="form-group">
+              <label for="registerUsername">Username</label>
+              <input
+                type="text"
+                id="registerUsername"
+                name="registerUsername"
+                required
+              />
+            </div>
+
+            <div class="form-group">
               <label for="registerPassword">Password</label>
               <input
                 type="password"
@@ -403,22 +373,6 @@
             <button type="submit">Create Account</button>
           </form>
 
-          <div class="divider">
-            <span class="divider-text">OR</span>
-          </div>
-
-          <!-- Google Sign-In Section -->
-          <button class="google-btn" id="googleSignIn">
-            <img
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-              class="google-icon"
-              alt="Google Icon"
-              width="18"
-              height="18"
-            />
-            Sign in with Google
-          </button>
-
           <div class="footer">
             <p>Already have an account? <a href="signin.html">Sign in</a></p>
           </div>
@@ -430,6 +384,21 @@
     </div>
 
     <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDZqvf_3hKV5Uf8gsgQi3VFgKwe_1-ikvA",
+        authDomain: "realtyenchance.firebaseapp.com",
+        projectId: "realtyenchance",
+        storageBucket: "realtyenchance.firebasestorage.app",
+        messagingSenderId: "155668361105",
+        appId: "1:155668361105:web:1777c9b240b7b726d37430",
+        measurementId: "G-LJP0WZBHWW"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const provider = new firebase.auth.GoogleAuthProvider();
+
       // Show message function
       function showMessage(text, type = "success") {
         const messageElement = document.getElementById("message");
@@ -450,6 +419,7 @@
           e.preventDefault();
 
           const registerEmail = document.getElementById("registerEmail");
+          const registerUsername = document.getElementById("registerUsername");
           const registerPassword = document.getElementById("registerPassword");
           const confirmPassword = document.getElementById("confirmPassword");
 
@@ -462,65 +432,37 @@
           // Create user object
           const user = {
             id: 1,
-            name: registerEmail.value.split("@")[0],
+            name: registerUsername.value,
             email: registerEmail.value,
             plan: "Basic",
             joinDate: new Date().toISOString(),
           };
 
-          // Save to localStorage
-          localStorage.setItem("currentUser", JSON.stringify(user));
+          auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value)
+          .then(() => {
+            showMessage("Account created successfully!");
 
-          showMessage("Account created successfully!");
+            // Save to localStorage
+            localStorage.setItem("currentUser", JSON.stringify(user));
 
-          // Check if there's a redirect destination after signup
-          const redirectDestination = localStorage.getItem("redirectAfterAuth");
+            // Check if there's a redirect destination after signup
+            const redirectDestination = localStorage.getItem("redirectAfterAuth");
 
-          // Clear the redirect info
-          localStorage.removeItem("redirectAfterAuth");
+            // Clear the redirect info
+            localStorage.removeItem("redirectAfterAuth");
 
-          // Redirect to appropriate destination
-          setTimeout(() => {
-            if (redirectDestination) {
-              window.location.href = redirectDestination;
-            } else {
-              window.location.href = "index.html";
-            }
-          }, 1000);
-        });
-
-      // Google Sign-In with redirect handling
-      document
-        .getElementById("googleSignIn")
-        .addEventListener("click", function () {
-          // Create a mock Google user
-          const user = {
-            id: 2,
-            name: "Google User",
-            email: "googleuser@example.com",
-            plan: "Basic",
-            joinDate: new Date().toISOString(),
-          };
-
-          // Save to localStorage
-          localStorage.setItem("currentUser", JSON.stringify(user));
-
-          showMessage("Google Sign-In successful!");
-
-          // Check for redirect after auth
-          const redirectDestination = localStorage.getItem("redirectAfterAuth");
-
-          // Clear the redirect info
-          localStorage.removeItem("redirectAfterAuth");
-
-          // Redirect appropriately
-          setTimeout(() => {
-            if (redirectDestination) {
-              window.location.href = redirectDestination;
-            } else {
-              window.location.href = "index.html";
-            }
-          }, 1000);
+            // Redirect to appropriate destination
+            setTimeout(() => {
+              if (redirectDestination) {
+                window.location.href = redirectDestination;
+              } else {
+                window.location.href = "index.html";
+              }
+            }, 1000);
+          })
+          .catch(error => {
+            showMessage("Error: " + error.message);
+          });
         });
     </script>
   </body>
