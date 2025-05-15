@@ -330,17 +330,17 @@
         .getElementById("signinForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
-
+    
           // Get form values
           const username = document.getElementById("username").value;
           const password = document.getElementById("password").value;
-
+    
           // Basic validation
           if (!username || !password) {
             alert("Please fill in all fields");
             return;
           }
-
+    
           // Create a user object to store in localStorage
           const user = {
             id: 1,
@@ -351,15 +351,25 @@
             plan: "Professional",
             joinDate: new Date().toISOString(),
           };
-
+    
           // Save to localStorage
           localStorage.setItem("currentUser", JSON.stringify(user));
-
+    
+          // Check if there's a redirect destination
+          const redirectDestination = localStorage.getItem("redirectAfterAuth");
+          
+          // Clear the redirect info
+          localStorage.removeItem("redirectAfterAuth");
+    
           // Show success message
           alert("Login successful!");
-
-          // Redirect to homepage
-          window.location.href = "index.html";
+    
+          // Redirect appropriately
+          if (redirectDestination) {
+            window.location.href = redirectDestination;
+          } else {
+            window.location.href = "index.html";
+          }
         });
     </script>
   </body>

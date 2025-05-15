@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription - RealtyEnhance</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .subscription-page {
+        min-height: calc(100vh - var(--header-height));
+        padding-top: var(--header-height);
+        background-color: var(--light-gray);
+      }
+
+      .subscription-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 60px 20px;
+      }
+
+      .page-title {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      
+      .page-title h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: var(--dark-gray);
+      }
+      
+      .page-title p {
+        font-size: 1.1rem;
+        color: var(--dark-gray);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .subscription-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+      }
+
+      .subscription-plans {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 30px;
+      }
+
+      .plan-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+        background-color: var(--light-gray);
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 5px;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+
+      .plan-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .plan-card {
+        flex: 1;
+        min-width: 200px;
+        padding: 25px;
+        border: 2px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        position: relative;
+        cursor: pointer;
+      }
+
+      .plan-card.selected {
+        border-color: var(--primary-color);
+        background-color: var(--primary-light);
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+      }
+
+      .plan-card:hover:not(.selected) {
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+      }
+
+      .plan-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--dark-gray);
+      }
+
+      .plan-price {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+      }
+
+      .plan-price .amount {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .plan-price .period {
+        font-size: 1rem;
+        color: var(--dark-gray);
+        margin-left: 5px;
+      }
+
+      .plan-features {
+        margin-bottom: 20px;
+      }
+
+      .plan-features ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .plan-features li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+
+      .plan-features li::before {
+        content: '\f00c';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+      }
+
+      .radio-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--medium-gray);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: var(--transition);
+      }
+
+      .plan-card.selected .radio-container {
+        border-color: var(--primary-color);
+      }
+
+      .radio-inner {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        opacity: 0;
+        transition: var(--transition);
+      }
+
+      .plan-card.selected .radio-inner {
+        opacity: 1;
+      }
+
+      .payment-summary {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 30px;
+        position: sticky;
+        top: calc(var(--header-height) + 20px);
+      }
+
+      .summary-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--medium-gray);
+      }
+
+      .summary-header h3 {
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+      }
+
+      .summary-content {
+        margin-bottom: 25px;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        padding-top: 15px;
+        margin-top: 15px;
+        border-top: 1px solid var(--medium-gray);
+        font-size: 1.1rem;
+      }
+
+      .payment-methods {
+        margin-bottom: 25px;
+      }
+
+      .payment-methods h4 {
+        font-size: 1rem;
+        margin-bottom: 15px;
+      }
+
+      .payment-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .payment-option {
+        flex: 1;
+        min-width: 70px;
+        height: 50px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .payment-option:hover, 
+      .payment-option.selected {
+        border-color: var(--primary-color);
+        background-color: var(--primary-light);
+      }
+
+      .payment-option img {
+        max-width: 70%;
+        max-height: 70%;
+      }
+
+      .payment-form {
+        margin-top: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--medium-gray);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: var(--transition);
+      }
+
+      .form-group input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(44, 108, 255, 0.15);
+      }
+
+      .card-row {
+        display: flex;
+        gap: 15px;
+      }
+
+      .card-row .form-group {
+        flex: 1;
+      }
+
+      .terms-agreement {
+        margin: 20px 0;
+        font-size: 0.85rem;
+        color: var(--dark-gray);
+      }
+
+      .terms-agreement a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      
+      .terms-agreement a:hover {
+        text-decoration: underline;
+      }
+
+      .btn-subscribe {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+        margin-top: 10px;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .subscription-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .payment-summary {
+          position: static;
+          margin-top: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <a href="index.html" style="text-decoration: none; color: inherit">
+            <div class="logo-container">
+              <svg class="site-logo" viewBox="0 0 100 100" width="40" height="40">
+                <!-- House Shape -->
+                <polygon
+                  points="50,15 85,40 85,85 15,85 15,40"
+                  fill="white"
+                  stroke="#2c6cff"
+                  stroke-width="3"
+                  stroke-linejoin="round"
+                />
+
+                <!-- Roof -->
+                <polygon
+                  points="50,5 90,35 10,35"
+                  fill="#2c6cff"
+                  stroke="#2c6cff"
+                  stroke-width="2"
+                />
+
+                <!-- Door -->
+                <rect
+                  x="40"
+                  y="60"
+                  width="20"
+                  height="25"
+                  fill="#5f9ea0"
+                  rx="2"
+                  ry="2"
+                />
+                <circle cx="45" cy="72.5" r="2" fill="white" />
+
+                <!-- Windows -->
+                <rect
+                  x="25"
+                  y="50"
+                  width="15"
+                  height="15"
+                  fill="#2c6cff"
+                  stroke="white"
+                  stroke-width="2"
+                  rx="2"
+                  ry="2"
+                />
+                <rect
+                  x="60"
+                  y="50"
+                  width="15"
+                  height="15"
+                  fill="#2c6cff"
+                  stroke="white"
+                  stroke-width="2"
+                  rx="2"
+                  ry="2"
+                />
+
+                <!-- Sparkle Effects -->
+                <polygon
+                  points="60,53 62,57 66,59 62,61 60,65 58,61 54,59 58,57"
+                  fill="white"
+                />
+                <polygon
+                  points="75,75 76,77 78,78 76,79 75,81 74,79 72,78 74,77"
+                  fill="white"
+                />
+              </svg>
+              <h1><span class="highlight">Realty</span>Enhance</h1>
+            </div>
+          </a>
+          <p class="tagline">Professional Image Enhancement for Real Estate</p>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#how-it-works">How It Works</a></li>
+            <li><a href="index.html#pricing">Pricing</a></li>
+            <li><a href="index.html#examples">Examples</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li id="auth-nav-item">
+              <!-- This will be populated by JS -->
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="subscription-page">
+      <div class="subscription-container">
+        <div class="page-title">
+          <h1>Choose Your Subscription</h1>
+          <p>Select a plan that works best for your business needs and enhance your real estate photos today</p>
+        </div>
+
+        <div class="subscription-grid">
+          <div class="subscription-plans">
+            <div class="plan-toggle">
+              <span>Monthly</span>
+              <label class="switch">
+                <input type="checkbox" id="billing-toggle">
+                <span class="slider round"></span>
+              </label>
+              <span>Annual (Save 20%)</span>
+            </div>
+
+            <div class="plan-options">
+              <div class="plan-card" data-plan="basic" data-monthly="29" data-annually="279">
+                <div class="radio-container">
+                  <div class="radio-inner"></div>
+                </div>
+                <h3>Basic</h3>
+                <div class="plan-price">
+                  <span class="currency">$</span>
+                  <span class="amount">29</span>
+                  <span class="period">/month</span>
+                </div>
+                <p>20 images/month</p>
+                <div class="plan-features">
+                  <ul>
+                    <li>All enhancement levels</li>
+                    <li>Standard processing time</li>
+                    <li>60-day image storage</li>
+                    <li>Email support</li>
+                    <li>$1.75/image for extras</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="plan-card selected" data-plan="pro" data-monthly="79" data-annually="759">
+                <div class="radio-container">
+                  <div class="radio-inner"></div>
+                </div>
+                <h3>Pro</h3>
+                <div class="plan-price">
+                  <span class="currency">$</span>
+                  <span class="amount">79</span>
+                  <span class="period">/month</span>
+                </div>
+                <p>60 images/month</p>
+                <div class="plan-features">
+                  <ul>
+                    <li>All enhancement levels</li>
+                    <li>Priority processing</li>
+                    <li>90-day image storage</li>
+                    <li>Priority support</li>
+                    <li>$1.50/image for extras</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="plan-card" data-plan="agency" data-monthly="199" data-annually="1919">
+                <div class="radio-container">
+                  <div class="radio-inner"></div>
+                </div>
+                <h3>Agency</h3>
+                <div class="plan-price">
+                  <span class="currency">$</span>
+                  <span class="amount">199</span>
+                  <span class="period">/month</span>
+                </div>
+                <p>200 images/month</p>
+                <div class="plan-features">
+                  <ul>
+                    <li>All enhancement levels</li>
+                    <li>Expedited processing</li>
+                    <li>120-day image storage</li>
+                    <li>Dedicated support</li>
+                    <li>$1.25/image for extras</li>
+                    <li>White-label option</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-summary">
+            <div class="summary-header">
+              <h3>Order Summary</h3>
+              <p id="plan-name">Pro Plan - Monthly</p>
+            </div>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span>Subscription</span>
+                <span id="subscription-price">$79.00</span>
+              </div>
+              <div class="summary-item">
+                <span>Tax</span>
+                <span id="tax-amount">$0.00</span>
+              </div>
+              <div class="summary-total">
+                <span>Total</span>
+                <span id="total-amount">$79.00</span>
+              </div>
+            </div>
+
+            <div class="payment-methods">
+              <h4>Payment Method</h4>
+              <div class="payment-options">
+                <div class="payment-option selected" data-method="card">
+                  <i class="far fa-credit-card fa-lg"></i>
+                </div>
+                <div class="payment-option" data-method="paypal">
+                  <i class="fab fa-paypal fa-lg"></i>
+                </div>
+                <div class="payment-option" data-method="apple">
+                  <i class="fab fa-apple-pay fa-lg"></i>
+                </div>
+                <div class="payment-option" data-method="google">
+                  <i class="fab fa-google-pay fa-lg"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-form">
+              <div class="form-group">
+                <label for="card-name">Name on Card</label>
+                <input type="text" id="card-name" placeholder="John Smith">
+              </div>
+              <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
+              </div>
+              <div class="card-row">
+                <div class="form-group">
+                  <label for="expiry-date">Expiry Date</label>
+                  <input type="text" id="expiry-date" placeholder="MM/YY">
+                </div>
+                <div class="form-group">
+                  <label for="cvv">CVV</label>
+                  <input type="text" id="cvv" placeholder="123">
+                </div>
+              </div>
+              <div class="terms-agreement">
+                <p>By subscribing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+              </div>
+              <button class="btn btn-primary btn-subscribe">Subscribe Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h2><span class="highlight">Realty</span>Enhance</h2>
+            <p>Enhancing real estate imagery since 2025</p>
+          </div>
+          <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#how-it-works">How It Works</a></li>
+              <li><a href="index.html#pricing">Pricing</a></li>
+              <li><a href="index.html#examples">Examples</a></li>
+              <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-social">
+            <h3>Connect With Us</h3>
+            <div class="social-icons">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 RealtyEnhance. All Rights Reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <div id="notification-container"></div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Authentication check
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        const authNavItem = document.getElementById('auth-nav-item');
+        
+        // Update auth navigation
+        if (currentUser) {
+          authNavItem.innerHTML = `
+            <a href="#" id="auth-button" class="btn btn-primary logged-in">
+              <i class="fas fa-user-circle"></i> <span>${currentUser.name || 'User'}</span>
+            </a>
+          `;
+          
+          // Setup user menu dropdown
+          const authButton = document.getElementById('auth-button');
+          if (authButton) {
+            authButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              toggleUserDropdown();
+            });
+          }
+        } else {
+          // Redirect to sign in if not logged in
+          window.location.href = 'signin.html';
+          localStorage.setItem('redirectAfterAuth', 'subscription.html');
+        }
+        
+        // User dropdown functionality
+        function toggleUserDropdown() {
+          let accountDropdown = document.getElementById('account-dropdown');
+          if (!accountDropdown) {
+            accountDropdown = document.createElement('div');
+            accountDropdown.id = 'account-dropdown';
+            accountDropdown.className = 'account-dropdown';
+            accountDropdown.innerHTML = `
+              <div class="user-info">
+                <div class="user-avatar">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                  <span class="user-name">${currentUser.name || currentUser.email.split('@')[0]}</span>
+                  <span class="user-email">${currentUser.email}</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="account-settings"><i class="fas fa-cog"></i> Account Settings</a></li>
+                <li><a href="#" id="my-images"><i class="fas fa-images"></i> My Images</a></li>
+                <li><a href="#" class="logout-link"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+              </ul>
+            `;
+            document.body.appendChild(accountDropdown);
+            
+            // Setup dropdown events
+            setupDropdownEvents(accountDropdown);
+          }
+          
+          // Toggle active state
+          accountDropdown.classList.toggle('active');
+          
+          // Close dropdown when clicking outside
+          if (accountDropdown.classList.contains('active')) {
+            setTimeout(() => {
+              const closeDropdown = (event) => {
+                const authButton = document.getElementById('auth-button');
+                if (!accountDropdown.contains(event.target) && 
+                    !authButton?.contains(event.target)) {
+                  accountDropdown.classList.remove('active');
+                  document.removeEventListener('click', closeDropdown);
+                }
+              };
+              document.addEventListener('click', closeDropdown);
+            }, 100);
+          }
+        }
+        
+        function setupDropdownEvents(dropdown) {
+          const logoutLink = dropdown.querySelector('.logout-link');
+          if (logoutLink) {
+            logoutLink.addEventListener('click', function(e) {
+              e.preventDefault();
+              localStorage.removeItem('currentUser');
+              dropdown.classList.remove('active');
+              showNotification('You have been logged out successfully', 'success');
+              
+              // Redirect after logout
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 1000);
+            });
+          }
+          
+          // Other dropdown options
+          const accountSettings = dropdown.querySelector('#account-settings');
+          const myImages = dropdown.querySelector('#my-images');
+          
+          if (accountSettings) {
+            accountSettings.addEventListener('click', function(e) {
+              e.preventDefault();
+              dropdown.classList.remove('active');
+              showNotification('Account settings feature coming soon!', 'info');
+            });
+          }
+          
+          if (myImages) {
+            myImages.addEventListener('click', function(e) {
+              e.preventDefault();
+              dropdown.classList.remove('active');
+              showNotification('Image library feature coming soon!', 'info');
+            });
+          }
+        }
+        
+        // Notification system
+        function showNotification(message, type = 'success') {
+          // Create notification container if it doesn't exist
+          let notificationContainer = document.getElementById('notification-container');
+          if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.id = 'notification-container';
+            notificationContainer.style.position = 'fixed';
+            notificationContainer.style.top = '100px';
+            notificationContainer.style.right = '20px';
+            notificationContainer.style.zIndex = '1000';
+            document.body.appendChild(notificationContainer);
+          }
+          
+          // Create notification element
+          const notification = document.createElement('div');
+          notification.className = `notification ${type}`;
+          notification.innerHTML = `
+            <div class="notification-content">
+              <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                               type === 'error' ? 'fa-exclamation-circle' : 
+                               'fa-info-circle'}"></i>
+              <span>${message}</span>
+            </div>
+            <button class="close-notification"><i class="fas fa-times"></i></button>
+          `;
+          
+          // Add close button functionality
+          notification.querySelector('.close-notification').addEventListener('click', () => {
+            notification.style.animation = 'slideOut 0.3s forwards';
+            setTimeout(() => {
+              notification.remove();
+            }, 300);
+          });
+          
+          // Add to container
+          notificationContainer.appendChild(notification);
+          
+          // Animate in
+          setTimeout(() => {
+            notification.style.animation = 'slideIn 0.3s forwards';
+          }, 10);
+          
+          // Auto remove after 5 seconds
+          setTimeout(() => {
+            if (notification.parentElement) {
+              notification.style.animation = 'slideOut 0.3s forwards';
+              setTimeout(() => {
+                if (notification.parentElement) {
+                  notification.remove();
+                }
+              }, 300);
+            }
+          }, 5000);
+        }
+        
+        // Subscription plan selection logic
+        const planCards = document.querySelectorAll('.plan-card');
+        const billingToggle = document.getElementById('billing-toggle');
+        const planNameEl = document.getElementById('plan-name');
+        const subscriptionPriceEl = document.getElementById('subscription-price');
+        const taxAmountEl = document.getElementById('tax-amount');
+        const totalAmountEl = document.getElementById('total-amount');
+        
+        // Plan selection
+        planCards.forEach(card => {
+          card.addEventListener('click', () => {
+            // Update selected state
+            planCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            // Update pricing display
+            updatePricingSummary();
+          });
+        });
+        
+        // Billing period toggle
+        if (billingToggle) {
+          billingToggle.addEventListener('change', updatePricingSummary);
+        }
+        
+        // Update pricing summary
+        function updatePricingSummary() {
+          const selectedPlan = document.querySelector('.plan-card.selected');
+          const isAnnual = billingToggle.checked;
+          
+          if (selectedPlan) {
+            const planName = selectedPlan.querySelector('h3').textContent;
+            const priceType = isAnnual ? 'annually' : 'monthly';
+            const price = parseFloat(selectedPlan.dataset[priceType]);
+            const images = selectedPlan.querySelector('p').textContent;
+            
+            // Calculate tax (example: 8% tax)
+            const taxRate = 0.08;
+            const taxAmount = price * taxRate;
+            const totalAmount = price + taxAmount;
+            
+            // Update summary display
+            planNameEl.textContent = `${planName} Plan - ${isAnnual ? 'Annual' : 'Monthly'}`;
+            subscriptionPriceEl.textContent = `$${price.toFixed(2)}`;
+            taxAmountEl.textContent = `$${taxAmount.toFixed(2)}`;
+            totalAmountEl.textContent = `$${totalAmount.toFixed(2)}`;
+            
+            // Update plan card displays for annual pricing
+            planCards.forEach(card => {
+              const priceEl = card.querySelector('.amount');
+              const periodEl = card.querySelector('.period');
+              
+              if (isAnnual) {
+                priceEl.textContent = (parseFloat(card.dataset.annually) / 12).toFixed(0);
+                periodEl.textContent = '/month, billed annually';
+              } else {
+                priceEl.textContent = card.dataset.monthly;
+                periodEl.textContent = '/month';
+              }
+            });
+          }
+        }
+        
+        // Initial update
+        updatePricingSummary();
+        
+        // Payment method selection
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        
+        paymentOptions.forEach(option => {
+          option.addEventListener('click', () => {
+            paymentOptions.forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+          });
+        });
+        
+        // Form submission
+        const subscribeBtn = document.querySelector('.btn-subscribe');
+        
+        if (subscribeBtn) {
+          subscribeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const cardName = document.getElementById('card-name').value.trim();
+            const cardNumber = document.getElementById('card-number').value.trim();
+            const expiryDate = document.getElementById('expiry-date').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+            
+            // Basic form validation
+            if (!cardName || !cardNumber || !expiryDate || !cvv) {
+              showNotification('Please fill out all payment details', 'error');
+              return;
+            }
+            
+            // Credit card number format validation (simplistic)
+            if (!/^\d{13,19}$/.test(cardNumber.replace(/\s/g, ''))) {
+              showNotification('Please enter a valid card number', 'error');
+              return;
+            }
+            
+            // Expiry date format validation (MM/YY)
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+              showNotification('Please enter a valid expiry date (MM/YY)', 'error');
+              return;
+            }
+            
+            // CVV validation
+            if (!/^\d{3,4}$/.test(cvv)) {
+              showNotification('Please enter a valid CVV code', 'error');
+              return;
+            }
+            
+            // Get selected plan
+            const selectedPlan = document.querySelector('.plan-card.selected');
+            const planType = selectedPlan ? selectedPlan.dataset.plan : 'pro';
+            const isAnnual = billingToggle.checked;
+            
+            // Show loading state
+            subscribeBtn.disabled = true;
+            subscribeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            // Simulate subscription processing
+            setTimeout(() => {
+              // Save subscription info to user account
+              if (currentUser) {
+                currentUser.plan = planType;
+                currentUser.billingCycle = isAnnual ? 'annual' : 'monthly';
+                currentUser.subscriptionDate = new Date().toISOString();
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+              }
+              
+              // Show success message
+              showNotification('Subscription successfully activated!', 'success');
+              
+              // Reset button state
+              subscribeBtn.disabled = false;
+              subscribeBtn.innerHTML = 'Subscribe Now';
+              
+              // Redirect to dashboard or home page
+              setTimeout(() => {
+                window.location.href = 'index.html';
+              }, 2000);
+            }, 2000);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

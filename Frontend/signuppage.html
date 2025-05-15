@@ -473,13 +473,23 @@
 
           showMessage("Account created successfully!");
 
-          // Redirect to home page after 1 second
+          // Check if there's a redirect destination after signup
+          const redirectDestination = localStorage.getItem("redirectAfterAuth");
+
+          // Clear the redirect info
+          localStorage.removeItem("redirectAfterAuth");
+
+          // Redirect to appropriate destination
           setTimeout(() => {
-            window.location.href = "index.html";
+            if (redirectDestination) {
+              window.location.href = redirectDestination;
+            } else {
+              window.location.href = "index.html";
+            }
           }, 1000);
         });
 
-      // Google Sign-In
+      // Google Sign-In with redirect handling
       document
         .getElementById("googleSignIn")
         .addEventListener("click", function () {
@@ -497,9 +507,19 @@
 
           showMessage("Google Sign-In successful!");
 
-          // Redirect to home page after 1 second
+          // Check for redirect after auth
+          const redirectDestination = localStorage.getItem("redirectAfterAuth");
+
+          // Clear the redirect info
+          localStorage.removeItem("redirectAfterAuth");
+
+          // Redirect appropriately
           setTimeout(() => {
-            window.location.href = "index.html";
+            if (redirectDestination) {
+              window.location.href = redirectDestination;
+            } else {
+              window.location.href = "index.html";
+            }
           }, 1000);
         });
     </script>

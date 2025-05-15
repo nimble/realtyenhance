@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
   //
   fixHeaderLayout();
 
+  initializeGetStartedButtons();
+
   // Functions
   function initializeAnimations() {
     const animateElements = document.querySelectorAll(
@@ -1970,4 +1972,33 @@ document.addEventListener("DOMContentLoaded", function () {
     button.style.height = "auto";
     button.style.minWidth = "80px";
   });
+
+  // Function to handle "Get Started" button clicks
+  function initializeGetStartedButtons() {
+    // Select all "Get Started" buttons
+    const getStartedButtons = document.querySelectorAll(
+      '.btn-primary[href="#upload-section"], .pricing-card .btn'
+    );
+
+    getStartedButtons.forEach((button) => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // Check if user is logged in
+        const currentUser = JSON.parse(
+          localStorage.getItem("currentUser") || "null"
+        );
+
+        if (currentUser) {
+          // User is logged in, redirect to subscription page
+          window.location.href = "subscription.html";
+        } else {
+          // User is not logged in, redirect to signup page
+          // Store the intended destination for after signup
+          localStorage.setItem("redirectAfterAuth", "subscription.html");
+          window.location.href = "signuppage.html";
+        }
+      });
+    });
+  }
 });
