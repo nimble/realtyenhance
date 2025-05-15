@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In - RealtyEnhance</title>
     <link rel="stylesheet" href="styles.css" />
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -146,6 +149,71 @@
         font-size: 14px;
         color: #666;
         margin-top: 5px;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .divider-text {
+        padding: 0 10px;
+        color: #666;
+      }
+
+      .google-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        background-color: #fff;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .google-btn:hover {
+        background-color: #f8f8f8;
+        border-color: #ccc;
+      }
+
+      .google-icon {
+        margin-right: 10px;
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+        display: none;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
       }
     </style>
   </head>
@@ -317,15 +385,62 @@
 
             <button type="submit">Sign In</button>
           </form>
+          <div class="divider">
+            <span class="divider-text">OR</span>
+          </div>
+
+          <!-- Google Sign-In Section -->
+          <button class="google-btn" id="googleSignIn">
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              class="google-icon"
+              alt="Google Icon"
+              width="18"
+              height="18"
+            />
+            Sign in with Google
+          </button>
+          
           <div class="footer">
             <p>Don't have an account? <a href="signuppage.html">Sign up</a></p>
             <p><a href="#">Forgot password?</a></p>
           </div>
+
+          <!-- Message Display -->
+          <div id="message" class="message"></div>
         </div>
       </div>
     </div>
 
     <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDZqvf_3hKV5Uf8gsgQi3VFgKwe_1-ikvA",
+        authDomain: "realtyenchance.firebaseapp.com",
+        projectId: "realtyenchance",
+        storageBucket: "realtyenchance.firebasestorage.app",
+        messagingSenderId: "155668361105",
+        appId: "1:155668361105:web:1777c9b240b7b726d37430",
+        measurementId: "G-LJP0WZBHWW"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      // Show message function
+      function showMessage(text, type = "success") {
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = text;
+        messageElement.className = `message ${type}`;
+        messageElement.style.display = "block";
+
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+          messageElement.style.display = "none";
+        }, 5000);
+      }
+
       document
         .getElementById("signinForm")
         .addEventListener("submit", function (event) {
@@ -370,6 +485,48 @@
           } else {
             window.location.href = "index.html";
           }
+        });
+
+        // Google Sign-In with redirect handling
+      document
+        .getElementById("googleSignIn")
+        .addEventListener("click", function () {
+
+          auth.signInWithPopup(provider)
+          .then(() => {
+            const gmailUser = auth.currentUser;
+
+            const user = {
+            id: 2,
+            name: gmailUser.name,
+            email: gmailUser.email,
+            plan: "Basic",
+            joinDate: new Date().toISOString(),
+          };
+
+          // Save to localStorage
+          localStorage.setItem("currentUser", JSON.stringify(user));
+
+          showMessage("Google Sign-In successful!");
+          
+          // Check for redirect after auth
+          const redirectDestination = localStorage.getItem("redirectAfterAuth");
+
+          // Clear the redirect info
+          localStorage.removeItem("redirectAfterAuth");
+
+          // Redirect appropriately
+          setTimeout(() => {
+            if (redirectDestination) {
+              window.location.href = redirectDestination;
+            } else {
+              window.location.href = "index.html";
+            }
+          }, 1000);
+          })
+          .catch(error => {
+            showMessage("Error: " + error.message);
+          });
         });
     </script>
   </body>
