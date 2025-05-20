@@ -9,10 +9,24 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5678;
 
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Add OPTIONS handling for preflight requests
+app.options('*', cors());
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the public directory (for backend assets if needed)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Test route
@@ -37,7 +51,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 5MB limit
   fileFilter: function (req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return cb(new Error('Only JPG, JPEG, and PNG image files are allowed!'), false);
@@ -53,39 +67,50 @@ app.use((req, res, next) => {
 });
 
 // Image enhancement endpoint
+// Image enhancement endpoint
 app.post('/enhance', upload.single('image'), async (req, res) => {
   console.log('POST /enhance received');
   try {
     if (!req.file) {
       console.log('No file uploaded');
-      return res.status(400).send('No image file uploaded');
+      return res.status(400).json({ error: 'No image file uploaded' });
     }
 
     const imageFile = req.file;
-    console.log(`Received image: ${imageFile.filename}`);
+    console.log(`Received image: ${imageFile.filename}, size: ${imageFile.size} bytes`);
 
     // Read the image file
     const imageBuffer = fs.readFileSync(imageFile.path);
-    
-    // Convert to base64
     const base64Image = imageBuffer.toString('base64');
     
-    // Use OpenAI API for image enhancement
-    const enhancedImage = await enhanceImageWithOpenAI(base64Image);
-    
-    // Save the enhanced image
-    const enhancedImagePath = path.join(__dirname, 'uploads', 'enhanced-' + imageFile.filename);
-    fs.writeFileSync(enhancedImagePath, enhancedImage, 'base64');
-    
-    // Send the enhanced image back to the client
-    res.sendFile(enhancedImagePath);
-    
+    console.log('Calling enhanceImageWithOpenAI...');
+    try {
+      const enhancedImage = await enhanceImageWithOpenAI(base64Image);
+      console.log('Enhancement successful, returning image as base64...');
+      
+      // Return a properly formatted JSON response with the base64 image data
+      res.set('Content-Type', 'application/json');
+      return res.send(JSON.stringify({ 
+        success: true, 
+        message: 'Image enhanced successfully',
+        imageData: enhancedImage  // This is already base64 encoded
+      }));
+      
+    } catch (enhanceError) {
+      console.error('Error from OpenAI API:', enhanceError);
+      res.status(500).json({ 
+        success: false,
+        error: 'Error processing image with OpenAI: ' + enhanceError.message 
+      });
+    }
   } catch (error) {
     console.error('Error processing image:', error);
-    res.status(500).send('Error processing image: ' + error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Error processing image: ' + error.message 
+    });
   }
 });
-
 // Function to enhance image using OpenAI DALL-E API
 async function enhanceImageWithOpenAI(base64Image) {
   try {
@@ -125,7 +150,7 @@ async function enhanceImageWithOpenAI(base64Image) {
 // CORS preflight handling
 app.options('/enhance', cors());
 
-// Start the server
+// Start the server 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
   console.log('Routes available:');

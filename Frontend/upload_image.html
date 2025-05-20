@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Image Enhancer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #upload-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #enhance-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        #enhance-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .image-preview {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .preview-container {
+            width: 48%;
+            text-align: center;
+        }
+        .image-container {
+            height: 300px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .download-options {
+            margin-top: 30px;
+        }
+        .option-group {
+            margin-bottom: 15px;
+        }
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+    <div class="container">
+        <h1>House Image Enhancer</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <button id="upload-btn">Choose House Image</button>
+            <p id="file-name">No file chosen</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="enhance-btn" disabled>Enhance Image</button>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Enhancing your image with AI...</p>
+        </div>
+        
+        <div class="image-preview">
+            <div class="preview-container">
+                <h3>Original Image</h3>
+                <div class="image-container" id="original-image-container">
+                    <p>Your image will appear here</p>
+                </div>
+            </div>
+            
+            <div class="preview-container">
+                <h3>Enhanced Image</h3>
+                <div class="image-container" id="enhanced-image-container">
+                    <p>Enhanced image will appear here</p>
+                </div>
+            </div>
+        </div>
+        <div class="download-options" id="download-options">
+            <h3>Download Options</h3>
+            
+            <div class="option-group">
+                <label for="format-select">Image Format:</label>
+                <select id="format-select">
+                    <option value="jpeg">JPEG</option>
+                    <option value="png">PNG</option>
+                    <option value="webp">WebP</option>
+                </select>
+            </div>
+            
+            <div class="option-group">
+                <label for="quality-slider">Quality:</label>
+                <input type="range" id="quality-slider" min="10" max="100" value="90" step="5">
+                <span id="quality-value">90%</span>
+            </div>
+            
+            <div class="option-group">
+                <label for="size-select">Size:</label>
+                <select id="size-select">
+                    <option value="original">Original Size</option>
+                    <option value="large">Large (1024px)</option>
+                    <option value="medium">Medium (768px)</option>
+                    <option value="small">Small (512px)</option>
+                </select>
+            </div>
+            
+            <div class="btn-container">
+                <button class="download-btn" id="download-btn">Download Enhanced Image</button>
+                <button class="download-btn" id="download-both-btn">Download Both Images</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Backend API URL - Change this to match your backend server
+            const BACKEND_API_URL = 'http://localhost:5678';
+            
+            // DOM Elements
+            const fileInput = document.getElementById('file-input');
+            const uploadBtn = document.getElementById('upload-btn');
+            const fileName = document.getElementById('file-name');
+            const enhanceBtn = document.getElementById('enhance-btn');
+            const originalImageContainer = document.getElementById('original-image-container');
+            const enhancedImageContainer = document.getElementById('enhanced-image-container');
+            const loading = document.getElementById('loading');
+            const downloadBtn = document.getElementById('download-btn');
+            const downloadBothBtn = document.getElementById('download-both-btn');
+            const qualitySlider = document.getElementById('quality-slider');
+            const qualityValue = document.getElementById('quality-value');
+            
+            // Variables
+            let selectedFile = null;
+            let originalImageURL = null;
+            let enhancedImageURL = null;
+            
+            const testBtn = document.createElement('button');
+            testBtn.textContent = 'Test Connection';
+            testBtn.style.marginLeft = '10px'; // Add some spacing
+            testBtn.onclick = function() {
+                fetch(`${BACKEND_API_URL}/test`)
+                .then(res => res.text())
+                .then(data => alert(`Connection successful! Server says: ${data}`))
+                .catch(err => alert(`Connection failed: ${err.message}`));
+            };
+            document.querySelector('.upload-section').appendChild(testBtn);
+            
+            // Event Listeners
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', function(e) {
+                selectedFile = e.target.files[0];
+                
+                if (selectedFile) {
+                    fileName.textContent = selectedFile.name;
+                    enhanceBtn.disabled = false;
+                    
+                    // Display original image preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        originalImageURL = event.target.result;
+                        originalImageContainer.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = originalImageURL;
+                        originalImageContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(selectedFile);
+                    
+                    // Clear enhanced image
+                    enhancedImageContainer.innerHTML = '<p>Enhanced image will appear here</p>';
+                    enhancedImageURL = null;
+                }
+            });
+            
+            enhanceBtn.addEventListener('click', function() {
+                if (!selectedFile) {
+                    alert('Please select an image first');
+                    return;
+                }
+                
+                // Show loading spinner
+                loading.style.display = 'block';
+                enhanceBtn.disabled = true;
+                
+                // Create FormData and append the file
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                
+                // Send to backend
+                console.log('Sending image to server...');
+                fetch(`${BACKEND_API_URL}/enhance`, {
+                    method: 'POST',
+                    body: formData,
+                     headers:{
+                        'Accept': 'image/*'
+                    }
+                })
+                .then(res => {
+                    console.log('Response status:', res.status);
+                console.log('Response type:', res.type);
+                    console.log('Response headers:', Array.from(res.headers.entries()));
+                     if (!res.ok) {
+                    return res.text().then(text => {
+                        console.error('Error response text:', text);
+                        throw new Error(text || res.statusText);
+                    });
+                }
+                    return res.blob();
+                })
+                .then(blob => {
+                    // Create a URL for the blob
+                    enhancedImageURL = URL.createObjectURL(blob);
+                
+                    // Clear out any placeholder text
+                    enhancedImageContainer.innerHTML = '';
+                
+                    // Create an <img>, point it at the blob-URL, and append it
+                    const img = document.createElement('img');
+                    img.src = enhancedImageURL;
+                    img.alt = 'Enhanced Image';
+                    enhancedImageContainer.appendChild(img);
+                
+                    // Hide spinner / re-enable button
+                    loading.style.display = 'none';
+                    enhanceBtn.disabled = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Enhancement failed: ' + err.message);
+                    loading.style.display = 'none';
+                    enhanceBtn.disabled = false;
+                });
+            });
+            
+            // Image Processing Function
+            async function processAndDownloadImage(imageUrl, filename, format, quality, size) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = 'Anonymous';
+                    img.src = imageUrl;
+                    
+                    img.onload = function() {
+                        // Create canvas
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Resize image if needed
+                        if (size !== 'original') {
+                            let maxDimension;
+                            switch(size) {
+                                case 'large': maxDimension = 1024; break;
+                                case 'medium': maxDimension = 768; break;
+                                case 'small': maxDimension = 512; break;
+                                default: maxDimension = Math.max(width, height);
+                            }
+                            
+                            if (width > height) {
+                                if (width > maxDimension) {
+                                    height = Math.round(height * (maxDimension / width));
+                                    width = maxDimension;
+                                }
+                            } else {
+                                if (height > maxDimension) {
+                                    width = Math.round(width * (maxDimension / height));
+                                    height = maxDimension;
+                                }
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw image to canvas
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to desired format
+                        let mimeType;
+                        switch(format) {
+                            case 'jpeg': mimeType = 'image/jpeg'; break;
+                            case 'png': mimeType = 'image/png'; break;
+                            case 'webp': mimeType = 'image/webp'; break;
+                            default: mimeType = 'image/jpeg';
+                        }
+                        
+                        // Convert to data URL
+                        const dataUrl = canvas.toDataURL(mimeType, quality / 100);
+                        
+                        // Create download link
+                        const a = document.createElement('a');
+                        a.href = dataUrl;
+                        a.download = filename + '.' + format;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        resolve();
+                    };
+                    
+                    img.onerror = function() {
+                        reject(new Error('Error loading image for processing'));
+                    };
+                });
+            }
+            
+            // Download buttons
+            downloadBtn.addEventListener('click', async function() {
+                if (!enhancedImageURL) {
+                    alert('No enhanced image available');
+                    return;
+                }
+                
+                const format = document.getElementById('format-select').value;
+                const quality = parseInt(document.getElementById('quality-slider').value);
+                const size = document.getElementById('size-select').value;
+                
+                try {
+                    await processAndDownloadImage(
+                        enhancedImageURL,
+                        'enhanced-house-image',
+                        format,
+                        quality,
+                        size
+                    );
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    alert('Download failed: ' + error.message);
+                }
+            });
+            
+            downloadBothBtn.addEventListener('click', async function() {
+                if (!enhancedImageURL || !originalImageURL) {
+                    alert('Both images are not available');
+                    return;
+                }
+                
+                const format = document.getElementById('format-select').value;
+                const quality = parseInt(document.getElementById('quality-slider').value);
+                const size = document.getElementById('size-select').value;
+                
+                try {
+                    await processAndDownloadImage(
+                        originalImageURL,
+                        'original-house-image',
+                        format,
+                        quality,
+                        size
+                    );
+                    
+                    await processAndDownloadImage(
+                        enhancedImageURL,
+                        'enhanced-house-image',
+                        format,
+                        quality,
+                        size
+                    );
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    alert('Download failed: ' + error.message);
+                }
+            });
+            
+            // Update quality value display
+            qualitySlider.addEventListener('input', function() {
+                qualityValue.textContent = this.value + '%';
+            });
+        });
+    </script>
+</body>
+</html>
